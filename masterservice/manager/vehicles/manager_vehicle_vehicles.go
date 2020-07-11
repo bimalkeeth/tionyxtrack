@@ -11,7 +11,7 @@ import (
 //Create Vehicle
 //----------------------------------------
 func (v *VehicleManager) CreateVehicle(vehicle bu.VehicleBO) (uint, error) {
-	veh := vehicleFac.New(bs.CVehicle).(bs.Vehicle)
+	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	vehicleFac.Conn.Begin()
 	res, err := veh.CreateVehicle(vehicle)
 
@@ -27,7 +27,7 @@ func (v *VehicleManager) CreateVehicle(vehicle bu.VehicleBO) (uint, error) {
 //Update Vehicle
 //-----------------------------------------
 func (v *VehicleManager) UpdateVehicle(vehicle bu.VehicleBO) (bool, error) {
-	veh := vehicleFac.New(bs.CVehicle).(bs.Vehicle)
+	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	vehicleFac.Conn.Begin()
 
 	res, err := veh.UpdateVehicle(vehicle)
@@ -63,7 +63,7 @@ func (v *VehicleManager) UpdateVehicle(vehicle bu.VehicleBO) (bool, error) {
 //Delete Vehicle
 //-----------------------------------------
 func (v *VehicleManager) DeleteVehicle(vehicleId uint) (bool, error) {
-	veh := vehicleFac.New(bs.CVehicle).(bs.Vehicle)
+	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	vehicleFac.Conn.Begin()
 	res, err := veh.DeleteVehicle(vehicleId)
 	if err != nil {
@@ -78,7 +78,7 @@ func (v *VehicleManager) DeleteVehicle(vehicleId uint) (bool, error) {
 //Get Vehicle by Id
 //-----------------------------------------
 func (v *VehicleManager) GetVehicleById(vehicleId uint) (bu.VehicleBO, error) {
-	veh := vehicleFac.New(bs.CVehicle).(bs.Vehicle)
+	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	res, err := veh.GetVehicleById(vehicleId)
 	return res, err
 }
@@ -87,7 +87,7 @@ func (v *VehicleManager) GetVehicleById(vehicleId uint) (bu.VehicleBO, error) {
 //Get Vehicle by Registration
 //-----------------------------------------
 func (v *VehicleManager) GetVehicleByRegistration(registration string) (bu.VehicleBO, error) {
-	veh := vehicleFac.New(bs.CVehicle).(bs.Vehicle)
+	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	res, err := veh.GetVehicleByRegistration(registration)
 	return res, err
 }
@@ -96,7 +96,7 @@ func (v *VehicleManager) GetVehicleByRegistration(registration string) (bu.Vehic
 //Get Vehicle by Fleet Id
 //-----------------------------------------
 func (v *VehicleManager) GetVehiclesByFleetId(fleetId uint) ([]bu.VehicleBO, error) {
-	veh := vehicleFac.New(bs.CVehicle).(bs.Vehicle)
+	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	res, err := veh.GetVehiclesByFleetId(fleetId)
 	return res, err
 }

@@ -9,7 +9,7 @@ import (
 //Create vehicle operator bound
 //-----------------------------------------
 func (v *VehicleManager) CreateVehicleOpBound(op bu.VehicleOperatorBoundBO) (uint, error) {
-	vh := vehicleFac.New(bs.CVhOperatorBound).(bs.VehicleOprBound)
+	vh := vehicleFac.New(bs.CVhOperatorBound).(*bs.VehicleOprBound)
 	vehicleFac.Conn.Begin()
 	res, err := vh.CreateVehicleOpBound(op)
 	if err != nil {
@@ -24,7 +24,7 @@ func (v *VehicleManager) CreateVehicleOpBound(op bu.VehicleOperatorBoundBO) (uin
 //Update vehicle operator bound
 //-----------------------------------------
 func (v *VehicleManager) UpdateVehicleOpBound(op bu.VehicleOperatorBoundBO) (bool, error) {
-	vh := vehicleFac.New(bs.CVhOperatorBound).(bs.VehicleOprBound)
+	vh := vehicleFac.New(bs.CVhOperatorBound).(*bs.VehicleOprBound)
 	vehicleFac.Conn.Begin()
 	res, err := vh.UpdateVehicleOpBound(op)
 	if err != nil {
@@ -39,7 +39,7 @@ func (v *VehicleManager) UpdateVehicleOpBound(op bu.VehicleOperatorBoundBO) (boo
 //Delete vehicle operator bound
 //-----------------------------------------
 func (v *VehicleManager) DeleteVehicleOpBound(id uint) (bool, error) {
-	vh := vehicleFac.New(bs.CVhOperatorBound).(bs.VehicleOprBound)
+	vh := vehicleFac.New(bs.CVhOperatorBound).(*bs.VehicleOprBound)
 	vehicleFac.Conn.Begin()
 	res, err := vh.DeleteVehicleOpBound(id)
 	if err != nil {

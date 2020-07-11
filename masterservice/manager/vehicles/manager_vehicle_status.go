@@ -9,7 +9,7 @@ import (
 //Create vehicle status
 //------------------------------------------------
 func (v *VehicleManager) CreateVehicleStatus(bo bu.VehicleStatusBO) (uint, error) {
-	vr := vehicleFac.New(bs.CVhStatus).(bs.VehicleStatus)
+	vr := vehicleFac.New(bs.CVhStatus).(*bs.VehicleStatus)
 	vehicleFac.Conn.Begin()
 	res, err := vr.CreateVehicleStatus(bo)
 	if err != nil {
@@ -25,7 +25,7 @@ func (v *VehicleManager) CreateVehicleStatus(bo bu.VehicleStatusBO) (uint, error
 //-------------------------------------------------
 func (v *VehicleManager) UpdateVehicleStatus(bo bu.VehicleStatusBO) (bool, error) {
 
-	vr := vehicleFac.New(bs.CVhStatus).(bs.VehicleStatus)
+	vr := vehicleFac.New(bs.CVhStatus).(*bs.VehicleStatus)
 	vehicleFac.Conn.Begin()
 	res, err := vr.UpdateVehicleStatus(bo)
 	if err != nil {
@@ -40,7 +40,7 @@ func (v *VehicleManager) UpdateVehicleStatus(bo bu.VehicleStatusBO) (bool, error
 //Delete vehicle status
 //-------------------------------------------------
 func (v *VehicleManager) DeleteVehicleStatus(id uint) (bool, error) {
-	vr := vehicleFac.New(bs.CVhStatus).(bs.VehicleStatus)
+	vr := vehicleFac.New(bs.CVhStatus).(*bs.VehicleStatus)
 	vehicleFac.Conn.Begin()
 	res, err := vr.DeleteVehicleStatus(id)
 	if err != nil {
@@ -55,7 +55,7 @@ func (v *VehicleManager) DeleteVehicleStatus(id uint) (bool, error) {
 //Get all vehicle status
 //------------------------------------------------
 func (v *VehicleManager) GetAllVehicleStatus() ([]bu.VehicleStatusBO, error) {
-	vr := vehicleFac.New(bs.CVhStatus).(bs.VehicleStatus)
+	vr := vehicleFac.New(bs.CVhStatus).(*bs.VehicleStatus)
 	res, err := vr.GetAllVehicleStatus()
 	return res, err
 }

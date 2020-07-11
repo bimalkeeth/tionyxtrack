@@ -10,7 +10,7 @@ import (
 //----------------------------------------------
 func (o *OprManager) CreateOperator(bo bu.OperatorBO) (uint, error) {
 
-	op := OpFac.New(bs.CVhOperator).(bs.Operator)
+	op := OpFac.New(bs.CVhOperator).(*bs.Operator)
 	OpFac.Conn.Begin()
 	res, err := op.CreateOperator(bo)
 	if err != nil {
@@ -25,7 +25,7 @@ func (o *OprManager) CreateOperator(bo bu.OperatorBO) (uint, error) {
 //Update operator
 //----------------------------------------------
 func (o *OprManager) UpdateOperator(bo bu.OperatorBO) (bool, error) {
-	op := OpFac.New(bs.CVhOperator).(bs.Operator)
+	op := OpFac.New(bs.CVhOperator).(*bs.Operator)
 	OpFac.Conn.Begin()
 	res, err := op.UpdateOperator(bo)
 	if err != nil {
@@ -40,7 +40,7 @@ func (o *OprManager) UpdateOperator(bo bu.OperatorBO) (bool, error) {
 //Delete operator
 //----------------------------------------------
 func (o *OprManager) DeleteOperator(id uint) (bool, error) {
-	op := OpFac.New(bs.CVhOperator).(bs.Operator)
+	op := OpFac.New(bs.CVhOperator).(*bs.Operator)
 	OpFac.Conn.Begin()
 	res, err := op.DeleteOperator(id)
 	if err != nil {
@@ -55,7 +55,7 @@ func (o *OprManager) DeleteOperator(id uint) (bool, error) {
 //Get operator by Id
 //---------------------------------------------
 func (o *OprManager) GetOperatorById(id uint) (bu.OperatorBO, error) {
-	op := OpFac.New(bs.CVhOperator).(bs.Operator)
+	op := OpFac.New(bs.CVhOperator).(*bs.Operator)
 	res, err := op.GetOperatorById(id)
 	return res, err
 }
@@ -64,7 +64,7 @@ func (o *OprManager) GetOperatorById(id uint) (bu.OperatorBO, error) {
 //Get operator by vehicleid
 //---------------------------------------------
 func (o *OprManager) GetOperatorsByVehicleId(id uint) ([]bu.OperatorBO, error) {
-	op := OpFac.New(bs.CVhOperator).(bs.Operator)
+	op := OpFac.New(bs.CVhOperator).(*bs.Operator)
 	res, err := op.GetOperatorsByVehicleId(id)
 	return res, err
 }
