@@ -21,6 +21,7 @@
       <w>fromstatusid</w>
       <w>gorm</w>
       <w>makeid</w>
+      <w>mapp</w>
       <w>masterpoto</w>
       <w>modelid</w>
       <w>modelname</w>
@@ -32,6 +33,7 @@
       <w>regioname</w>
       <w>regionid</w>
       <w>regionname</w>
+      <w>roletype</w>
       <w>setconn</w>
       <w>stateid</w>
       <w>statusid</w>
