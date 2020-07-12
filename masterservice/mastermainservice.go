@@ -3,10 +3,9 @@ package main
 import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/util/log"
-	 masterpoto "tionyxtrack/masterservice/proto"
-	 api "tionyxtrack/masterservice/protoapi"
+	masterpoto "tionyxtrack/masterservice/proto"
+	api "tionyxtrack/masterservice/protoapi"
 )
-
 
 func main() {
 	service := micro.NewService(
@@ -14,8 +13,8 @@ func main() {
 	)
 	service.Init()
 
-	err:=masterpoto.RegisterMasterServiceHandler(service.Server(), new(api.MasterService))
-	if err !=nil{
+	err := masterpoto.RegisterMasterServiceHandler(service.Server(), new(api.MasterService))
+	if err != nil {
 		log.Log(err)
 	}
 	if err := service.Run(); err != nil {
