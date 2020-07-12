@@ -5,7 +5,7 @@ import (
 	"github.com/micro/go-micro/v2/util/log"
 	"github.com/micro/go-plugins/transport/nats/v2"
 	nat "github.com/nats-io/nats.go"
-	masterpoto "tionyxtrack/masterservice/proto"
+	proto "tionyxtrack/masterservice/proto"
 	api "tionyxtrack/masterservice/protoapi"
 )
 
@@ -17,7 +17,7 @@ func main() {
 	)
 	service.Init()
 
-	err := masterpoto.RegisterMasterServiceHandler(service.Server(), new(api.MasterService))
+	err := proto.RegisterMasterServiceHandler(service.Server(), new(api.MasterService))
 	if err != nil {
 		log.Log(err)
 	}
