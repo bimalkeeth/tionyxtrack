@@ -3,10 +3,11 @@ package entities
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	"tionyxtrack/common"
 )
 
 type TableRoles struct {
-	gorm.Model
+	common.Base
 	Name        string `gorm:"column:name;not_null"`
 	Description string `gorm:"column:description"`
 }

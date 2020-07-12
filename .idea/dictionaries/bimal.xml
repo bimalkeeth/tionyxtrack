@@ -4,13 +4,20 @@
       <w>addressid</w>
       <w>addresstype</w>
       <w>addresstypeid</w>
+      <w>applicationmenu</w>
+      <w>changedate</w>
       <w>contactid</w>
       <w>contacttype</w>
       <w>contacttypeid</w>
       <w>countryid</w>
       <w>countryname</w>
+      <w>dateexpire</w>
+      <w>dateregistered</w>
       <w>dbase</w>
       <w>drivinglic</w>
+      <w>emailaddress</w>
+      <w>emailverifiedat</w>
+      <w>firstname</w>
       <w>fleetcode</w>
       <w>fleetcontact</w>
       <w>fleetid</w>
@@ -20,19 +27,25 @@
       <w>foreignkey</w>
       <w>fromstatusid</w>
       <w>gorm</w>
+      <w>isemailverified</w>
+      <w>lastname</w>
       <w>makeid</w>
       <w>mapp</w>
       <w>masterpoto</w>
       <w>modelid</w>
       <w>modelname</w>
+      <w>officername</w>
       <w>operationidcontactid</w>
       <w>operatorcontacts</w>
       <w>operatorid</w>
       <w>operatoridaddressid</w>
       <w>operatoridvehicleid</w>
+      <w>othernames</w>
       <w>regioname</w>
       <w>regionid</w>
       <w>regionname</w>
+      <w>regisrationduration</w>
+      <w>roleid</w>
       <w>roletype</w>
       <w>setconn</w>
       <w>stateid</w>
@@ -42,6 +55,8 @@
       <w>tostatusid</w>
       <w>typecontact</w>
       <w>uindex</w>
+      <w>userid</w>
+      <w>userroles</w>
       <w>vehicleid</w>
       <w>vehiclemake</w>
       <w>vehiclemodel</w>
