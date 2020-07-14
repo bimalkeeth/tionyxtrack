@@ -6,6 +6,7 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.24.0
 
 require (
 	github.com/golang/protobuf v1.4.2
+	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.14
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/labstack/echo/v4 v4.1.16

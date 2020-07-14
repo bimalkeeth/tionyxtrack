@@ -20,4 +20,6 @@ func New() IRoutes {
 func (Routes) MasterRoutes(server *echo.Echo) {
 	routes := mast.New(masterService)
 	server.GET("/", routes.GetHome)
+	server.POST("/createcompany", routes.CreateCompany)
+	server.POST("/cratecontact", routes.CreateContact)
 }

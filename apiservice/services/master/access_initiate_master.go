@@ -12,6 +12,7 @@ type IMaster interface {
 	CreateCompany(context echo.Context) error
 	UpdateCompany(context echo.Context) error
 	DeleteCompany(context echo.Context) error
+	CreateContact(context echo.Context) error
 }
 
 var mic micro.Service
