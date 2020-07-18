@@ -23,7 +23,7 @@ func (t TableVehicleModel) Validate(db *gorm.DB) {
 	if len(t.ModelName) == 0 {
 		_ = db.AddError(errors.New("model name should contain value"))
 	}
-	if t.MakeId == 0 {
+	if t.MakeId == uuid.Nil {
 		_ = db.AddError(errors.New("make should contain value"))
 	}
 }

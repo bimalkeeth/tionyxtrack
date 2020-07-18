@@ -16,7 +16,7 @@ func (m *MasterManager) CreateCompany(company bu.CompanyBO) (uuid.UUID, error) {
 	res, err := master.CreateCompany(company)
 	if err != nil {
 		masFac.Conn.Rollback()
-		return 0, err
+		return uuid.Nil, err
 	}
 	masFac.Conn.Commit()
 	return res, nil
@@ -61,7 +61,7 @@ func (m *MasterManager) CreateAddressType(addressType bu.AddressTypeBO) (uuid.UU
 	res, err := master.CreateAddressType(addressType)
 	if err != nil {
 		masFac.Conn.Rollback()
-		return 0, err
+		return uuid.Nil, err
 	}
 	masFac.Conn.Commit()
 	return res, nil
@@ -154,7 +154,7 @@ func (m *MasterManager) CreateRegion(bo bu.RegionBO) (uuid.UUID, error) {
 	res, err := master.CreateRegion(bo)
 	if err != nil {
 		masFac.Conn.Rollback()
-		return 0, err
+		return uuid.Nil, err
 	}
 	masFac.Conn.Commit()
 	return res, nil
@@ -235,7 +235,7 @@ func (m *MasterManager) CreateState(bo bu.StateBO) (uuid.UUID, error) {
 	res, err := master.CreateState(bo)
 	if err != nil {
 		masFac.Conn.Rollback()
-		return 0, err
+		return uuid.Nil, err
 	}
 	masFac.Conn.Commit()
 	return res, nil

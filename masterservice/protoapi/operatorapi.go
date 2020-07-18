@@ -73,6 +73,11 @@ func (m *MasterService) GetOperatorById(ctx context.Context, req *pro.RequestKey
 
 	defer RecoverError()
 
+	if err := val.ValidateRequest(req); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
 	result, err := oprManager.GetOperatorById(uuid.FromStringOrNil(req.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
@@ -144,6 +149,11 @@ func (m *MasterService) GetOperatorById(ctx context.Context, req *pro.RequestKey
 func (m *MasterService) GetOperatorsByVehicleId(ctx context.Context, req *pro.RequestKey, out *pro.ResponseOperator) error {
 
 	defer RecoverError()
+
+	if err := val.ValidateRequest(req); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
 
 	oprManager := opr.New()
 	result, err := oprManager.GetOperatorsByVehicleId(uuid.FromStringOrNil(req.Id))
@@ -267,6 +277,11 @@ func (m *MasterService) GetAllContactsByOperator(ctx context.Context, in *pro.Re
 
 	defer RecoverError()
 
+	if err := val.ValidateRequest(in); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
 	result, err := oprManager.GetAllContactsByOperator(uuid.FromStringOrNil(in.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
@@ -349,8 +364,13 @@ func (m *MasterService) GetOperatorLocationByOperator(ctx context.Context, in *p
 
 	defer RecoverError()
 
+	if err := val.ValidateRequest(in); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
-	result, err := oprManager.GetOperatorLocationByOperator(uint(in.Id))
+	result, err := oprManager.GetOperatorLocationByOperator(uuid.FromStringOrNil(in.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 	for _, item := range result {
 		updateOpr, _ := timestamp.TimestampProto(item.UpdateAt)
