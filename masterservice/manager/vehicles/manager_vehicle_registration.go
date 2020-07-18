@@ -1,6 +1,7 @@
 package vehicles
 
 import (
+	uuid "github.com/satori/go.uuid"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
 )
@@ -8,7 +9,7 @@ import (
 //---------------------------------------------
 //Create vehicle registration
 //---------------------------------------------
-func (v *VehicleManager) CreateVehicleReg(bo bu.VehicleTrackRegBO) (uint, error) {
+func (v *VehicleManager) CreateVehicleReg(bo bu.VehicleTrackRegBO) (uuid.UUID, error) {
 	vr := vehicleFac.New(bs.CVhRegistration).(*bs.VehicleReg)
 	vehicleFac.Conn.Begin()
 	result, err := vr.CreateVehicleReg(bo)
@@ -39,7 +40,7 @@ func (v *VehicleManager) UpdateVehicleReg(bo bu.VehicleTrackRegBO) (bool, error)
 //--------------------------------------------
 //Delete vehicle registration
 //--------------------------------------------
-func (v *VehicleManager) DeleteVehicleReg(id uint) (bool, error) {
+func (v *VehicleManager) DeleteVehicleReg(id uuid.UUID) (bool, error) {
 	vr := vehicleFac.New(bs.CVhRegistration).(*bs.VehicleReg)
 	vehicleFac.Conn.Begin()
 	result, err := vr.DeleteVehicleReg(id)
@@ -54,7 +55,7 @@ func (v *VehicleManager) DeleteVehicleReg(id uint) (bool, error) {
 //--------------------------------------------
 //Get all vehicle registration by vehicle id
 //--------------------------------------------
-func (v *VehicleManager) GetAllRegistrationsByVehicleId(id uint) ([]bu.VehicleTrackRegBO, error) {
+func (v *VehicleManager) GetAllRegistrationsByVehicleId(id uuid.UUID) ([]bu.VehicleTrackRegBO, error) {
 	vr := vehicleFac.New(bs.CVhRegistration).(*bs.VehicleReg)
 	result, err := vr.GetAllRegistrationsByVehicleId(id)
 	return result, err
@@ -63,7 +64,7 @@ func (v *VehicleManager) GetAllRegistrationsByVehicleId(id uint) ([]bu.VehicleTr
 //-------------------------------------------
 //Get all vehicle registration
 //-------------------------------------------
-func (v *VehicleManager) GetActiveRegistrationsByVehicleId(id uint) (bu.VehicleTrackRegBO, error) {
+func (v *VehicleManager) GetActiveRegistrationsByVehicleId(id uuid.UUID) (bu.VehicleTrackRegBO, error) {
 	vr := vehicleFac.New(bs.CVhRegistration).(*bs.VehicleReg)
 	result, err := vr.GetActiveRegistrationsByVehicleId(id)
 	return result, err

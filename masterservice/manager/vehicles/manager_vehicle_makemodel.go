@@ -1,6 +1,7 @@
 package vehicles
 
 import (
+	uuid "github.com/satori/go.uuid"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
 )
@@ -8,7 +9,7 @@ import (
 //---------------------------------------------
 //Create vehicle make
 //---------------------------------------------
-func (v *VehicleManager) CreateVehicleMake(bo bu.VehicleMakeBO) (uint, error) {
+func (v *VehicleManager) CreateVehicleMake(bo bu.VehicleMakeBO) (uuid.UUID, error) {
 	vh := vehicleFac.New(bs.CVehicleMake).(*bs.VehicleMake)
 	vehicleFac.Conn.Begin()
 	res, err := vh.CreateVehicleMake(bo)
@@ -38,7 +39,7 @@ func (v *VehicleManager) UpdateVehicleMake(bo bu.VehicleMakeBO) (bool, error) {
 //--------------------------------------------
 //Delete Vehicle make
 //--------------------------------------------
-func (v *VehicleManager) DeleteVehicleMake(id uint) (bool, error) {
+func (v *VehicleManager) DeleteVehicleMake(id uuid.UUID) (bool, error) {
 	vh := vehicleFac.New(bs.CVehicleMake).(*bs.VehicleMake)
 	vehicleFac.Conn.Begin()
 	res, err := vh.DeleteVehicleMake(id)
@@ -62,7 +63,7 @@ func (v *VehicleManager) GetAllVehicleMake() ([]bu.VehicleMakeBO, error) {
 //------------------------------------------
 //Get  vehicle make by id
 //------------------------------------------
-func (v *VehicleManager) GetVehicleMakeById(id uint) (bu.VehicleMakeBO, error) {
+func (v *VehicleManager) GetVehicleMakeById(id uuid.UUID) (bu.VehicleMakeBO, error) {
 	vh := vehicleFac.New(bs.CVehicleMake).(*bs.VehicleMake)
 	res, err := vh.GetVehicleMakeById(id)
 	return res, err
@@ -71,7 +72,7 @@ func (v *VehicleManager) GetVehicleMakeById(id uint) (bu.VehicleMakeBO, error) {
 //------------------------------------------
 //Create Vehicle Model
 //------------------------------------------
-func (v *VehicleManager) CreateVehicleModel(bo bu.VehicleModelBO) (uint, error) {
+func (v *VehicleManager) CreateVehicleModel(bo bu.VehicleModelBO) (uuid.UUID, error) {
 	vh := vehicleFac.New(bs.CVehicleModel).(*bs.VehicleModel)
 	vehicleFac.Conn.Begin()
 	res, err := vh.CreateVehicleModel(bo)
@@ -101,7 +102,7 @@ func (v *VehicleManager) UpdateVehicleModel(bo bu.VehicleModelBO) (bool, error) 
 //------------------------------------------
 //Delete vehicle model
 //------------------------------------------
-func (v *VehicleManager) DeleteVehicleModel(id uint) (bool, error) {
+func (v *VehicleManager) DeleteVehicleModel(id uuid.UUID) (bool, error) {
 	vh := vehicleFac.New(bs.CVehicleModel).(*bs.VehicleModel)
 	vehicleFac.Conn.Begin()
 	res, err := vh.DeleteVehicleModel(id)
@@ -116,7 +117,7 @@ func (v *VehicleManager) DeleteVehicleModel(id uint) (bool, error) {
 //------------------------------------------
 //Get all models by make
 //------------------------------------------
-func (v *VehicleManager) GetAllModelByMake(id uint) ([]bu.VehicleModelBO, error) {
+func (v *VehicleManager) GetAllModelByMake(id uuid.UUID) ([]bu.VehicleModelBO, error) {
 	vh := vehicleFac.New(bs.CVehicleModel).(*bs.VehicleModel)
 	res, err := vh.GetAllModelByMake(id)
 	return res, err
@@ -126,7 +127,7 @@ func (v *VehicleManager) GetAllModelByMake(id uint) ([]bu.VehicleModelBO, error)
 //-------------------------------------------
 //Get Model by Id
 //-------------------------------------------
-func (v *VehicleManager) GetModelById(id uint) (bu.VehicleModelBO, error) {
+func (v *VehicleManager) GetModelById(id uuid.UUID) (bu.VehicleModelBO, error) {
 	vh := vehicleFac.New(bs.CVehicleModel).(*bs.VehicleModel)
 	res, err := vh.GetModelById(id)
 	return res, err

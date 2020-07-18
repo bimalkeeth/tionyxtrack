@@ -1,10 +1,13 @@
 package entities
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"tionyxtrack/common"
+)
 import "errors"
 
 type TableVehicleStatus struct {
-	gorm.Model
+	common.Base
 	StatusType string `gorm:"column:statustype;not_null"`
 	StatusName string `gorm:"column:statusname;not_null"`
 }

@@ -19,7 +19,7 @@ func (e *ErrorJson) GetCreateErrorJson(err error) *pro.ResponseError {
 		errorResponse.IsError = true
 	} else {
 		errorResponse.ErrorMessage = make([]byte, 0)
-		errorResponse.IsError = true
+		errorResponse.IsError = false
 	}
 	return errorResponse
 }

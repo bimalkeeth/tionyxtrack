@@ -1,14 +1,17 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type VehicleTrackRegBO struct {
-	Id           uint
+	Id           uuid.UUID
 	RegisterDate time.Time
 	Duration     int
 	ExpiredDate  time.Time
 	Active       bool
-	VehicleId    uint
+	VehicleId    uuid.UUID
 	UpdatedAt    time.Time
 	Vehicle      VehicleBO
 }

@@ -1,10 +1,12 @@
 package bucontracts
 
+import uuid "github.com/satori/go.uuid"
+
 type CompanyBO struct {
-	Id        uint
+	Id        uuid.UUID
 	Name      string
-	AddressId uint
-	ContactId uint
+	AddressId uuid.UUID
+	ContactId uuid.UUID
 	Address   AddressBO
 	Contact   ContactBO
 }

@@ -1,10 +1,13 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type ContactBO struct {
-	Id            uint
+	Id            uuid.UUID
 	Contact       string
-	ContactTypeId uint
+	ContactTypeId uuid.UUID
 	UpdatedAt     time.Time
 }

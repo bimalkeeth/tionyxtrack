@@ -1,7 +1,9 @@
 package bucontracts
 
+import uuid "github.com/satori/go.uuid"
+
 type StateBO struct {
-	Id        uint
+	Id        uuid.UUID
 	Name      string
-	CountryId uint
+	CountryId uuid.UUID
 }

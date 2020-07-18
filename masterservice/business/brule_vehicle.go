@@ -3,17 +3,18 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IVehicle interface {
-	CreateVehicle(vehicle bu.VehicleBO) (uint, error)
+	CreateVehicle(vehicle bu.VehicleBO) (uuid.UUID, error)
 	UpdateVehicle(vehicle bu.VehicleBO) (bool, error)
-	DeleteVehicle(vehicleId uint) (bool, error)
-	GetVehicleById(vehicleId uint) (bu.VehicleBO, error)
+	DeleteVehicle(vehicleId uuid.UUID) (bool, error)
+	GetVehicleById(vehicleId uuid.UUID) (bu.VehicleBO, error)
 	GetVehicleByRegistration(registration string) (bu.VehicleBO, error)
-	GetVehiclesByFleetId(fleetId uint) ([]bu.VehicleBO, error)
+	GetVehiclesByFleetId(fleetId uuid.UUID) ([]bu.VehicleBO, error)
 }
 type Vehicle struct{ Db *gorm.DB }
 
@@ -24,7 +25,7 @@ func NewVehicle(db *gorm.DB) Vehicle {
 //----------------------------------------------------
 // Create Vehicle
 //----------------------------------------------------
-func (v *Vehicle) CreateVehicle(vehicle bu.VehicleBO) (uint, error) {
+func (v *Vehicle) CreateVehicle(vehicle bu.VehicleBO) (uuid.UUID, error) {
 	vehicleTable := ent.TableVehicle{MakeId: vehicle.MakeId,
 		FleetId:      vehicle.FleetId,
 		ModelId:      vehicle.ModelId,
@@ -40,7 +41,7 @@ func (v *Vehicle) CreateVehicle(vehicle bu.VehicleBO) (uint, error) {
 func (v *Vehicle) UpdateVehicle(vehicle bu.VehicleBO) (bool, error) {
 	vehicleTable := ent.TableVehicle{}
 	v.Db.First(&vehicleTable, vehicle.Id)
-	if vehicleTable.ID == 0 {
+	if vehicleTable.ID == uuid.Nil {
 		return false, errors.New("vehicle not found for update")
 	}
 	vehicleTable.MakeId = vehicle.MakeId
@@ -55,10 +56,10 @@ func (v *Vehicle) UpdateVehicle(vehicle bu.VehicleBO) (bool, error) {
 //----------------------------------------------------
 // Delete Vehicle
 //----------------------------------------------------
-func (v *Vehicle) DeleteVehicle(vehicleId uint) (bool, error) {
+func (v *Vehicle) DeleteVehicle(vehicleId uuid.UUID) (bool, error) {
 	vehicleTable := ent.TableVehicle{}
 	v.Db.First(&vehicleTable, vehicleId)
-	if vehicleTable.ID == 0 {
+	if vehicleTable.ID == uuid.Nil {
 		return false, errors.New("vehicle not found for update")
 	}
 	v.Db.Delete(&vehicleTable)
@@ -68,7 +69,7 @@ func (v *Vehicle) DeleteVehicle(vehicleId uint) (bool, error) {
 //----------------------------------------------------
 // Get Vehicle By Id
 //----------------------------------------------------
-func (v *Vehicle) GetVehicleById(vehicleId uint) (bu.VehicleBO, error) {
+func (v *Vehicle) GetVehicleById(vehicleId uuid.UUID) (bu.VehicleBO, error) {
 	vhTab := ent.TableVehicle{}
 	vehicleResult := bu.VehicleBO{}
 	v.Db.Preload("VehicleModel").Preload("VehicleMake").
@@ -82,7 +83,7 @@ func (v *Vehicle) GetVehicleById(vehicleId uint) (bu.VehicleBO, error) {
 		Preload("Registrations").
 		First(&vhTab, vehicleId)
 
-	if vhTab.ID == 0 {
+	if vhTab.ID == uuid.Nil {
 		return vehicleResult, nil
 	}
 	vehicleResult.FleetId = vhTab.FleetId
@@ -178,7 +179,7 @@ func (v *Vehicle) GetVehicleByRegistration(registration string) (bu.VehicleBO, e
 		Where(ent.TableVehicle{Registration: registration}).
 		First(&vhTab)
 
-	if vhTab.ID == 0 {
+	if vhTab.ID == uuid.Nil {
 		return vehicleResult, nil
 	}
 	vehicleResult.FleetId = vhTab.FleetId
@@ -256,7 +257,7 @@ func (v *Vehicle) GetVehicleByRegistration(registration string) (bu.VehicleBO, e
 
 }
 
-func (v *Vehicle) GetVehiclesByFleetId(fleetId uint) ([]bu.VehicleBO, error) {
+func (v *Vehicle) GetVehiclesByFleetId(fleetId uuid.UUID) ([]bu.VehicleBO, error) {
 	var vhTabs []ent.TableVehicle
 	var vehicleResults []bu.VehicleBO
 

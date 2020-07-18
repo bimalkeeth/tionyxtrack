@@ -1,6 +1,7 @@
 package vehicles
 
 import (
+	uuid "github.com/satori/go.uuid"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
 )
@@ -8,7 +9,7 @@ import (
 //------------------------------------------------
 //Create vehicle status
 //------------------------------------------------
-func (v *VehicleManager) CreateVehicleStatus(bo bu.VehicleStatusBO) (uint, error) {
+func (v *VehicleManager) CreateVehicleStatus(bo bu.VehicleStatusBO) (uuid.UUID, error) {
 	vr := vehicleFac.New(bs.CVhStatus).(*bs.VehicleStatus)
 	vehicleFac.Conn.Begin()
 	res, err := vr.CreateVehicleStatus(bo)
@@ -39,7 +40,7 @@ func (v *VehicleManager) UpdateVehicleStatus(bo bu.VehicleStatusBO) (bool, error
 //-------------------------------------------------
 //Delete vehicle status
 //-------------------------------------------------
-func (v *VehicleManager) DeleteVehicleStatus(id uint) (bool, error) {
+func (v *VehicleManager) DeleteVehicleStatus(id uuid.UUID) (bool, error) {
 	vr := vehicleFac.New(bs.CVhStatus).(*bs.VehicleStatus)
 	vehicleFac.Conn.Begin()
 	res, err := vr.DeleteVehicleStatus(id)

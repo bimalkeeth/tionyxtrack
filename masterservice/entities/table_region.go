@@ -1,10 +1,13 @@
 package entities
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"tionyxtrack/common"
+)
 import "errors"
 
 type TableRegion struct {
-	gorm.Model
+	common.Base
 	Region     string          `gorm:"column:region;not_null"`
 	RegionName string          `gorm:"column:regionname;not_null"`
 	Countries  []*TableCountry `gorm:"foreignkey:regionid"`

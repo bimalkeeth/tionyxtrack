@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type ICountry interface {
-	CreateCountry(bo bu.CountryBO) (uint, error)
+	CreateCountry(bo bu.CountryBO) (uuid.UUID, error)
 	UpdateCountry(bo bu.CountryBO) (bool, error)
-	DeleteCountry(Id uint) (bool, error)
-	GetCountryById(id uint) (bu.CountryBO, error)
+	DeleteCountry(Id uuid.UUID) (bool, error)
+	GetCountryById(id uuid.UUID) (bu.CountryBO, error)
 	GetAllCountries() ([]bu.CountryBO, error)
 }
 
@@ -22,7 +23,7 @@ func NewCountry(db *gorm.DB) *Country { return &Country{Db: db} }
 //--------------------------------------------
 //Create country
 //--------------------------------------------
-func (c *Country) CreateCountry(bo bu.CountryBO) (uint, error) {
+func (c *Country) CreateCountry(bo bu.CountryBO) (uuid.UUID, error) {
 	country := ent.TableCountry{CountryName: bo.CountryName,
 		RegionId: bo.RegionId,
 	}
@@ -36,7 +37,7 @@ func (c *Country) CreateCountry(bo bu.CountryBO) (uint, error) {
 func (c *Country) UpdateCountry(bo bu.CountryBO) (bool, error) {
 	country := ent.TableCountry{}
 	c.Db.First(&country, bo.Id)
-	if country.ID == 0 {
+	if country.ID == uuid.Nil {
 		return false, errors.New("country not found")
 	}
 	country.RegionId = bo.RegionId
@@ -48,10 +49,10 @@ func (c *Country) UpdateCountry(bo bu.CountryBO) (bool, error) {
 //----------------------------------------------
 //Delete Country
 //----------------------------------------------
-func (c *Country) DeleteCountry(Id uint) (bool, error) {
+func (c *Country) DeleteCountry(Id uuid.UUID) (bool, error) {
 	country := ent.TableCountry{}
 	c.Db.First(&country, Id)
-	if country.ID == 0 {
+	if country.ID == uuid.Nil {
 		return false, errors.New("country not found")
 	}
 	c.Db.Delete(&country)
@@ -61,11 +62,11 @@ func (c *Country) DeleteCountry(Id uint) (bool, error) {
 //------------------------------------------------
 //Get Country by Id
 //------------------------------------------------
-func (c *Country) GetCountryById(id uint) (bu.CountryBO, error) {
+func (c *Country) GetCountryById(id uuid.UUID) (bu.CountryBO, error) {
 
 	country := ent.TableCountry{}
 	c.Db.Preload("Region").First(&country, id)
-	if country.ID == 0 {
+	if country.ID == uuid.Nil {
 		return bu.CountryBO{}, errors.New("country not found")
 	}
 	return bu.CountryBO{Id: country.ID,

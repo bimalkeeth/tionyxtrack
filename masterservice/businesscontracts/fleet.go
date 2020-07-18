@@ -1,9 +1,12 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type FleetBO struct {
-	Id                   uint
+	Id                   uuid.UUID
 	UpdatedAt            time.Time
 	FleetCode            string
 	Name                 string
@@ -11,9 +14,9 @@ type FleetBO struct {
 	OtherName            string
 	DateRegistered       time.Time
 	RegistrationDuration float64
-	FleetContactId       uint
-	FleetLocationId      uint
-	CountryId            uint
+	FleetContactId       uuid.UUID
+	FleetLocationId      uuid.UUID
+	CountryId            uuid.UUID
 	FleetContacts        []ContactBO
 	Address              []AddressBO
 }

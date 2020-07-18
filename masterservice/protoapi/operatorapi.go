@@ -3,28 +3,46 @@ package protoapi
 import (
 	"context"
 	timestamp "github.com/golang/protobuf/ptypes"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
+	val "tionyxtrack/masterservice/common/validation"
 	opr "tionyxtrack/masterservice/manager/operator"
 	pro "tionyxtrack/masterservice/proto"
 )
 
-
 func (m *MasterService) CreateOperator(ctx context.Context, req *pro.RequestOperator, out *pro.ResponseCreateSuccess) error {
+
+	defer RecoverError()
+
 	oprManager := opr.New()
+
+	if err := val.ValidateOperator(val.CreateOperator, req.Operator); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	result, err := oprManager.CreateOperator(bu.OperatorBO{
 		Name:       req.Operator.Name,
 		SurName:    req.Operator.SurName,
 		DrivingLic: req.Operator.DrivingLic,
 	})
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
-	out.Id = uint64(result)
+	out.Id = result.String()
 	return nil
 }
 
 func (m *MasterService) UpdateOperator(ctx context.Context, req *pro.RequestOperator, out *pro.ResponseSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateOperator(val.UpdateOperator, req.Operator); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
 	result, err := oprManager.UpdateOperator(bu.OperatorBO{
-		Id:         uint(req.Operator.Id),
+		Id:         uuid.FromStringOrNil(req.Operator.Id),
 		Name:       req.Operator.Name,
 		SurName:    req.Operator.SurName,
 		Active:     req.Operator.Active,
@@ -36,20 +54,31 @@ func (m *MasterService) UpdateOperator(ctx context.Context, req *pro.RequestOper
 }
 
 func (m *MasterService) DeleteOperator(ctx context.Context, req *pro.RequestDelete, out *pro.ResponseSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateDelete(req); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
-	result, err := oprManager.DeleteOperator(uint(req.Id))
+	result, err := oprManager.DeleteOperator(uuid.FromStringOrNil(req.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 	out.Success = result
 	return nil
 }
 
 func (m *MasterService) GetOperatorById(ctx context.Context, req *pro.RequestKey, out *pro.ResponseOperator) error {
+
+	defer RecoverError()
+
 	oprManager := opr.New()
-	result, err := oprManager.GetOperatorById(uint(req.Id))
+	result, err := oprManager.GetOperatorById(uuid.FromStringOrNil(req.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 
 	data := &pro.OperatorProto{}
-	data.Id = uint64(result.Id)
+	data.Id = result.Id.String()
 	data.Active = result.Active
 	data.DrivingLic = result.DrivingLic
 	data.SurName = result.SurName
@@ -58,13 +87,13 @@ func (m *MasterService) GetOperatorById(ctx context.Context, req *pro.RequestKey
 	for _, con := range result.Contacts {
 		updateCon, _ := timestamp.TimestampProto(con.Contact.UpdatedAt)
 		contact := &pro.OperatorContactsProto{
-			Id:        uint64(con.Id),
+			Id:        con.Id.String(),
 			Primary:   con.Primary,
-			ContactId: uint64(con.ContactId),
+			ContactId: con.ContactId.String(),
 			Contact: &pro.ContactProto{
-				Id:            uint64(con.Contact.Id),
+				Id:            con.Contact.Id.String(),
 				Contact:       con.Contact.Contact,
-				ContactTypeId: uint64(con.Contact.ContactTypeId),
+				ContactTypeId: con.Contact.ContactTypeId.String(),
 				UpdatedAt:     updateCon,
 			},
 		}
@@ -73,19 +102,19 @@ func (m *MasterService) GetOperatorById(ctx context.Context, req *pro.RequestKey
 	for _, add := range result.Locations {
 		updateLoc, _ := timestamp.TimestampProto(add.UpdateAt)
 		address := &pro.OperatorLocationProto{
-			Id:         uint64(add.Id),
-			AddressId:  uint64(add.AddressId),
-			OperatorId: uint64(add.OperatorId),
+			Id:         add.Id.String(),
+			AddressId:  add.AddressId.String(),
+			OperatorId: add.OperatorId.String(),
 			Primary:    add.Primary,
 			UpdateAt:   updateLoc,
 		}
 		updateAdd, _ := timestamp.TimestampProto(add.Address.UpdatedAt)
 		addr := &pro.AddressProto{}
 		addr.Address = add.Address.Address
-		addr.Id = uint64(add.Address.Id)
-		addr.CountryId = uint64(add.Address.CountryId)
-		addr.AddressTypeId = uint64(add.Address.AddressTypeId)
-		addr.StateId = uint64(add.Address.StateId)
+		addr.Id = add.Address.Id.String()
+		addr.CountryId = add.Address.CountryId.String()
+		addr.AddressTypeId = add.Address.AddressTypeId.String()
+		addr.StateId = add.Address.StateId.String()
 		addr.UpdatedAt = updateAdd
 		addr.Location = add.Address.Location
 		addr.Suburb = add.Address.Suburb
@@ -97,13 +126,13 @@ func (m *MasterService) GetOperatorById(ctx context.Context, req *pro.RequestKey
 	for _, vh := range result.Vehicles {
 		updateVh, _ := timestamp.TimestampProto(vh.UpdatedAt)
 		vehicle := &pro.VehicleProto{
-			Id:           uint64(vh.Id),
+			Id:           vh.Id.String(),
 			UpdatedAt:    updateVh,
-			MakeId:       uint64(vh.MakeId),
-			ModelId:      uint64(vh.ModelId),
-			StatusId:     uint64(vh.StatusId),
+			MakeId:       vh.MakeId.String(),
+			ModelId:      vh.ModelId.String(),
+			StatusId:     vh.StatusId.String(),
 			Registration: vh.Registration,
-			FleetId:      uint64(vh.FleetId),
+			FleetId:      vh.FleetId.String(),
 		}
 		data.Vehicles = append(data.Vehicles, vehicle)
 	}
@@ -113,14 +142,17 @@ func (m *MasterService) GetOperatorById(ctx context.Context, req *pro.RequestKey
 }
 
 func (m *MasterService) GetOperatorsByVehicleId(ctx context.Context, req *pro.RequestKey, out *pro.ResponseOperator) error {
+
+	defer RecoverError()
+
 	oprManager := opr.New()
-	result, err := oprManager.GetOperatorsByVehicleId(uint(req.Id))
+	result, err := oprManager.GetOperatorsByVehicleId(uuid.FromStringOrNil(req.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 
 	for _, opr := range result {
 
 		data := &pro.OperatorProto{}
-		data.Id = uint64(opr.Id)
+		data.Id = opr.Id.String()
 		data.Active = opr.Active
 		data.DrivingLic = opr.DrivingLic
 		data.SurName = opr.SurName
@@ -129,13 +161,13 @@ func (m *MasterService) GetOperatorsByVehicleId(ctx context.Context, req *pro.Re
 		for _, con := range opr.Contacts {
 			updateCon, _ := timestamp.TimestampProto(con.Contact.UpdatedAt)
 			contact := &pro.OperatorContactsProto{
-				Id:        uint64(con.Id),
+				Id:        con.Id.String(),
 				Primary:   con.Primary,
-				ContactId: uint64(con.ContactId),
+				ContactId: con.ContactId.String(),
 				Contact: &pro.ContactProto{
-					Id:            uint64(con.Contact.Id),
+					Id:            con.Contact.Id.String(),
 					Contact:       con.Contact.Contact,
-					ContactTypeId: uint64(con.Contact.ContactTypeId),
+					ContactTypeId: con.Contact.ContactTypeId.String(),
 					UpdatedAt:     updateCon,
 				},
 			}
@@ -144,19 +176,19 @@ func (m *MasterService) GetOperatorsByVehicleId(ctx context.Context, req *pro.Re
 		for _, add := range opr.Locations {
 			updateLoc, _ := timestamp.TimestampProto(add.UpdateAt)
 			address := &pro.OperatorLocationProto{
-				Id:         uint64(add.Id),
-				AddressId:  uint64(add.AddressId),
-				OperatorId: uint64(add.OperatorId),
+				Id:         add.Id.String(),
+				AddressId:  add.AddressId.String(),
+				OperatorId: add.OperatorId.String(),
 				Primary:    add.Primary,
 				UpdateAt:   updateLoc,
 			}
 			updateAdd, _ := timestamp.TimestampProto(add.Address.UpdatedAt)
 			addr := &pro.AddressProto{}
 			addr.Address = add.Address.Address
-			addr.Id = uint64(add.Address.Id)
-			addr.CountryId = uint64(add.Address.CountryId)
-			addr.AddressTypeId = uint64(add.Address.AddressTypeId)
-			addr.StateId = uint64(add.Address.StateId)
+			addr.Id = add.Address.Id.String()
+			addr.CountryId = add.Address.CountryId.String()
+			addr.AddressTypeId = add.Address.AddressTypeId.String()
+			addr.StateId = add.Address.StateId.String()
 			addr.UpdatedAt = updateAdd
 			addr.Location = add.Address.Location
 			addr.Suburb = add.Address.Suburb
@@ -168,13 +200,13 @@ func (m *MasterService) GetOperatorsByVehicleId(ctx context.Context, req *pro.Re
 		for _, vh := range opr.Vehicles {
 			updateVh, _ := timestamp.TimestampProto(vh.UpdatedAt)
 			vehicle := &pro.VehicleProto{
-				Id:           uint64(vh.Id),
+				Id:           vh.Id.String(),
 				UpdatedAt:    updateVh,
-				MakeId:       uint64(vh.MakeId),
-				ModelId:      uint64(vh.ModelId),
-				StatusId:     uint64(vh.StatusId),
+				MakeId:       vh.MakeId.String(),
+				ModelId:      vh.ModelId.String(),
+				StatusId:     vh.StatusId.String(),
 				Registration: vh.Registration,
-				FleetId:      uint64(vh.FleetId),
+				FleetId:      vh.FleetId.String(),
 			}
 			data.Vehicles = append(data.Vehicles, vehicle)
 		}
@@ -184,45 +216,72 @@ func (m *MasterService) GetOperatorsByVehicleId(ctx context.Context, req *pro.Re
 }
 
 func (m *MasterService) CreateOperatorContact(ctx context.Context, req *pro.RequestOperatorContact, out *pro.ResponseCreateSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateOperatorContract(val.CreateOperatorContract, req); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
-	result, err := oprManager.CreateOperatorContact(uint(req.ContactId), uint(req.OperatorId), req.Primary)
+	result, err := oprManager.CreateOperatorContact(uuid.FromStringOrNil(req.ContactId), uuid.FromStringOrNil(req.OperatorId), req.Primary)
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
-	out.Id = uint64(result)
+	out.Id = result.String()
 	return nil
 }
 
 func (m *MasterService) UpdateOperatorContact(ctx context.Context, in *pro.RequestOperatorContact, out *pro.ResponseSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateOperatorContract(val.UpdateOperatorContract, in); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
-	result, err := oprManager.UpdateOperatorContact(uint(in.Id), uint(in.ContactId), uint(in.OperatorId), in.Primary)
+	result, err := oprManager.UpdateOperatorContact(uuid.FromStringOrNil(in.Id), uuid.FromStringOrNil(in.ContactId), uuid.FromStringOrNil(in.OperatorId), in.Primary)
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 	out.Success = result
 	return nil
 }
 
 func (m *MasterService) DeleteOperatorContact(ctx context.Context, in *pro.RequestDelete, out *pro.ResponseSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateDelete(in); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
-	result, err := oprManager.DeleteOperatorContact(uint(in.Id))
+	result, err := oprManager.DeleteOperatorContact(uuid.FromStringOrNil(in.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 	out.Success = result
 	return nil
 }
 
 func (m *MasterService) GetAllContactsByOperator(ctx context.Context, in *pro.RequestKey, out *pro.ResponseOperatorContacts) error {
+
+	defer RecoverError()
+
 	oprManager := opr.New()
-	result, err := oprManager.GetAllContactsByOperator(uint(in.Id))
+	result, err := oprManager.GetAllContactsByOperator(uuid.FromStringOrNil(in.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 
 	for _, op := range result {
 		oprCon := pro.OperatorContactsProto{}
-		oprCon.Id = uint64(op.Id)
+		oprCon.Id = op.Id.String()
 		oprCon.Primary = op.Primary
-		oprCon.OperatorId = uint64(op.OperatorId)
-		oprCon.ContactId = uint64(op.ContactId)
+		oprCon.OperatorId = op.OperatorId.String()
+		oprCon.ContactId = op.ContactId.String()
 		conUpdate, _ := timestamp.TimestampProto(op.Contact.UpdatedAt)
 		oprCon.Contact = &pro.ContactProto{
 			Contact:       op.Contact.Contact,
-			Id:            uint64(op.Contact.Id),
-			ContactTypeId: uint64(op.Contact.ContactTypeId),
+			Id:            op.Contact.Id.String(),
+			ContactTypeId: op.Contact.ContactTypeId.String(),
 			UpdatedAt:     conUpdate,
 		}
 		out.OperatorContacts = append(out.OperatorContacts, &oprCon)
@@ -231,59 +290,86 @@ func (m *MasterService) GetAllContactsByOperator(ctx context.Context, in *pro.Re
 }
 
 func (m *MasterService) CreateOperatorLocation(ctx context.Context, in *pro.RequestOperatorLocation, out *pro.ResponseCreateSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateOperatorLocation(val.CreateOperatorLocation, in.OperatorLocation); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
 	result, err := oprManager.CreateOperatorLocation(bu.OperatorLocationBO{
-		OperatorId: uint(in.OperatorLocation.OperatorId),
+		OperatorId: uuid.FromStringOrNil(in.OperatorLocation.OperatorId),
 		Primary:    in.OperatorLocation.Primary,
-		AddressId:  uint(in.OperatorLocation.AddressId),
+		AddressId:  uuid.FromStringOrNil(in.OperatorLocation.AddressId),
 	})
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
-	out.Id = uint64(result)
+	out.Id = result.String()
 	return nil
 }
 
 func (m *MasterService) UpdateOperatorLocation(ctx context.Context, in *pro.RequestOperatorLocation, out *pro.ResponseSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateOperatorLocation(val.UpdateOperatorLocation, in.OperatorLocation); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
 	result, err := oprManager.UpdateOperatorLocation(bu.OperatorLocationBO{
-		Id:         uint(in.OperatorLocation.Id),
-		OperatorId: uint(in.OperatorLocation.OperatorId),
+		Id:         uuid.FromStringOrNil(in.OperatorLocation.Id),
+		OperatorId: uuid.FromStringOrNil(in.OperatorLocation.OperatorId),
 		Primary:    in.OperatorLocation.Primary,
-		AddressId:  uint(in.OperatorLocation.AddressId),
+		AddressId:  uuid.FromStringOrNil(in.OperatorLocation.AddressId),
 	})
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 	out.Success = result
 	return nil
 }
 func (m *MasterService) DeleteOperatorLocation(ctx context.Context, in *pro.RequestDelete, out *pro.ResponseSuccess) error {
+
+	defer RecoverError()
+
+	if err := val.ValidateDelete(in); err != nil {
+		out.Errors = ErrorResponse.GetCreateErrorJson(err)
+		return nil
+	}
+
 	oprManager := opr.New()
-	result, err := oprManager.DeleteOperatorLocation(uint(in.Id))
+	result, err := oprManager.DeleteOperatorLocation(uuid.FromStringOrNil(in.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 	out.Success = result
 	return nil
 }
 
 func (m *MasterService) GetOperatorLocationByOperator(ctx context.Context, in *pro.RequestKey, out *pro.ResponseOperatorLocation) error {
+
+	defer RecoverError()
+
 	oprManager := opr.New()
 	result, err := oprManager.GetOperatorLocationByOperator(uint(in.Id))
 	out.Errors = ErrorResponse.GetCreateErrorJson(err)
 	for _, item := range result {
 		updateOpr, _ := timestamp.TimestampProto(item.UpdateAt)
 		opLoc := &pro.OperatorLocationProto{
-			Id:         uint64(item.Id),
-			AddressId:  uint64(item.AddressId),
-			OperatorId: uint64(item.OperatorId),
+			Id:         item.Id.String(),
+			AddressId:  item.AddressId.String(),
+			OperatorId: item.OperatorId.String(),
 			Primary:    item.Primary,
 			UpdateAt:   updateOpr,
 		}
 		updateAdd, _ := timestamp.TimestampProto(item.Address.UpdatedAt)
 		opLoc.Address = &pro.AddressProto{
-			Id:            uint64(item.Address.Id),
+			Id:            item.Address.Id.String(),
 			Address:       item.Address.Address,
 			Street:        item.Address.Street,
 			Suburb:        item.Address.Suburb,
-			StateId:       uint64(item.Address.StateId),
-			CountryId:     uint64(item.Address.CountryId),
-			AddressTypeId: uint64(item.Address.AddressTypeId),
+			StateId:       item.Address.StateId.String(),
+			CountryId:     item.Address.CountryId.String(),
+			AddressTypeId: item.Address.AddressTypeId.String(),
 			Location:      item.Address.Location,
 			UpdatedAt:     updateAdd,
 		}

@@ -1,6 +1,7 @@
 package contacts
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"log"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
@@ -8,14 +9,14 @@ import (
 )
 
 type IContactManager interface {
-	CreateContact(con bu.ContactBO) (uint, error)
+	CreateContact(con bu.ContactBO) (uuid.UUID, error)
 	UpdateContact(con bu.ContactBO) (bool, error)
-	DeleteContact(id uint) (bool, error)
-	ContactById(Id uint) (bu.ContactBO, error)
-	CreateAddress(add bu.AddressBO) (uint, error)
+	DeleteContact(id uuid.UUID) (bool, error)
+	ContactById(Id uuid.UUID) (bu.ContactBO, error)
+	CreateAddress(add bu.AddressBO) (uuid.UUID, error)
 	UpdateAddress(add bu.AddressBO) (bool, error)
-	DeleteAddress(id uint) (bool, error)
-	GetAddressById(id uint) (bu.AddressBO, error)
+	DeleteAddress(id uuid.UUID) (bool, error)
+	GetAddressById(id uuid.UUID) (bu.AddressBO, error)
 	GetAddressByName(name string) ([]bu.AddressBO, error)
 }
 

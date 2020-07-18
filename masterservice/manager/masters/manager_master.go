@@ -1,6 +1,7 @@
 package masters
 
 import (
+	uuid "github.com/satori/go.uuid"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
 )
@@ -8,7 +9,7 @@ import (
 //----------------------------------------
 //Create Company
 //----------------------------------------
-func (m *MasterManager) CreateCompany(company bu.CompanyBO) (uint, error) {
+func (m *MasterManager) CreateCompany(company bu.CompanyBO) (uuid.UUID, error) {
 
 	master := masFac.New(bs.CCompany).(*bs.Company)
 	masFac.Conn.Begin()
@@ -39,7 +40,7 @@ func (m *MasterManager) UpdateCompany(company bu.CompanyBO) (bool, error) {
 //-----------------------------------------
 //Delete Company
 //-----------------------------------------
-func (m *MasterManager) DeleteCompany(id uint) (bool, error) {
+func (m *MasterManager) DeleteCompany(id uuid.UUID) (bool, error) {
 	master := masFac.New(bs.CCompany).(*bs.Company)
 	masFac.Conn.Begin()
 	res, err := master.DeleteCompany(id)
@@ -54,7 +55,7 @@ func (m *MasterManager) DeleteCompany(id uint) (bool, error) {
 //-----------------------------------------
 //Create Address Type
 //-----------------------------------------
-func (m *MasterManager) CreateAddressType(addressType bu.AddressTypeBO) (uint, error) {
+func (m *MasterManager) CreateAddressType(addressType bu.AddressTypeBO) (uuid.UUID, error) {
 	master := masFac.New(bs.CAddressType).(*bs.AddressType)
 	masFac.Conn.Begin()
 	res, err := master.CreateAddressType(addressType)
@@ -84,7 +85,7 @@ func (m *MasterManager) UpdateAddressType(addressType bu.AddressTypeBO) (bool, e
 //----------------------------------------
 //Delete Address Type
 //----------------------------------------
-func (m *MasterManager) DeleteAddressType(id uint) (bool, error) {
+func (m *MasterManager) DeleteAddressType(id uuid.UUID) (bool, error) {
 	master := masFac.New(bs.CAddressType).(*bs.AddressType)
 	masFac.Conn.Begin()
 	res, err := master.DeleteAddressType(id)
@@ -99,7 +100,7 @@ func (m *MasterManager) DeleteAddressType(id uint) (bool, error) {
 //-----------------------------------------
 //Get AddressType by Id
 //-----------------------------------------
-func (m *MasterManager) GetAddressTypeById(id uint) (bu.AddressTypeBO, error) {
+func (m *MasterManager) GetAddressTypeById(id uuid.UUID) (bu.AddressTypeBO, error) {
 	master := masFac.New(bs.CAddressType).(*bs.AddressType)
 	res, err := master.GetAddressTypeById(id)
 	if err != nil {
@@ -147,7 +148,7 @@ func (m *MasterManager) GetAllAddressTypeNames(namePart string) ([]bu.AddressTyp
 //------------------------------------------
 //Create Region
 //------------------------------------------
-func (m *MasterManager) CreateRegion(bo bu.RegionBO) (uint, error) {
+func (m *MasterManager) CreateRegion(bo bu.RegionBO) (uuid.UUID, error) {
 	master := masFac.New(bs.CRegion).(*bs.Region)
 	masFac.Conn.Begin()
 	res, err := master.CreateRegion(bo)
@@ -177,7 +178,7 @@ func (m *MasterManager) UpdateRegion(bo bu.RegionBO) (bool, error) {
 //-----------------------------------------
 //Delete Region
 //-----------------------------------------
-func (m *MasterManager) DeleteRegion(id uint) (bool, error) {
+func (m *MasterManager) DeleteRegion(id uuid.UUID) (bool, error) {
 	master := masFac.New(bs.CRegion).(*bs.Region)
 	masFac.Conn.Begin()
 	res, err := master.DeleteRegion(id)
@@ -204,7 +205,7 @@ func (m *MasterManager) GetAllRegion() ([]bu.RegionBO, error) {
 //-----------------------------------------
 //Get Region By Id
 //-----------------------------------------
-func (m *MasterManager) GetRegionById(id uint) (bu.RegionBO, error) {
+func (m *MasterManager) GetRegionById(id uuid.UUID) (bu.RegionBO, error) {
 	master := masFac.New(bs.CRegion).(*bs.Region)
 	res, err := master.GetRegionById(id)
 	if err != nil {
@@ -228,7 +229,7 @@ func (m *MasterManager) GetRegionByName(name string) (bu.RegionBO, error) {
 //------------------------------------------
 //Create State
 //------------------------------------------
-func (m *MasterManager) CreateState(bo bu.StateBO) (uint, error) {
+func (m *MasterManager) CreateState(bo bu.StateBO) (uuid.UUID, error) {
 	master := masFac.New(bs.CState).(*bs.State)
 	masFac.Conn.Begin()
 	res, err := master.CreateState(bo)
@@ -259,7 +260,7 @@ func (m *MasterManager) UpdateState(bo bu.StateBO) (bool, error) {
 //-------------------------------------------
 //Delete State
 //-------------------------------------------
-func (m *MasterManager) DeleteState(id uint) (bool, error) {
+func (m *MasterManager) DeleteState(id uuid.UUID) (bool, error) {
 	master := masFac.New(bs.CState).(*bs.State)
 	masFac.Conn.Begin()
 	res, err := master.DeleteState(id)
@@ -274,7 +275,7 @@ func (m *MasterManager) DeleteState(id uint) (bool, error) {
 //-------------------------------------------
 //Get State by Id
 //-------------------------------------------
-func (m *MasterManager) GetStateById(id uint) (bu.StateBO, error) {
+func (m *MasterManager) GetStateById(id uuid.UUID) (bu.StateBO, error) {
 	master := masFac.New(bs.CState).(*bs.State)
 	res, err := master.GetStateById(id)
 	return res, err
@@ -283,7 +284,7 @@ func (m *MasterManager) GetStateById(id uint) (bu.StateBO, error) {
 //-------------------------------------------
 //Get State by Country
 //-------------------------------------------
-func (m *MasterManager) GetStateByCountryId(id uint) ([]bu.StateBO, error) {
+func (m *MasterManager) GetStateByCountryId(id uuid.UUID) ([]bu.StateBO, error) {
 	master := masFac.New(bs.CState).(*bs.State)
 	res, err := master.GetStateByCountryId(id)
 	return res, err

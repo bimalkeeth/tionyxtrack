@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IContactTypes interface {
-	CreateContactType(contactType bu.ContactTypeBO) (uint, error)
+	CreateContactType(contactType bu.ContactTypeBO) (uuid.UUID, error)
 	UpdateContactType(contactType bu.ContactTypeBO) (bool, error)
-	DeleteContactType(id uint) (bool, error)
-	GetContactTypeById(id uint) (bu.ContactTypeBO, error)
+	DeleteContactType(id uuid.UUID) (bool, error)
+	GetContactTypeById(id uuid.UUID) (bu.ContactTypeBO, error)
 	GetContactTypeByName(name string) (bu.ContactTypeBO, error)
 	GetAll() ([]bu.ContactTypeBO, error)
 	GetAllNames(namePart string) ([]bu.ContactTypeBO, error)
@@ -29,7 +30,7 @@ func NewContactType(db *gorm.DB) *ContactType {
 //-------------------------------------------
 // Create Address type
 //-------------------------------------------
-func (c *ContactType) CreateContactType(contactType bu.ContactTypeBO) (uint, error) {
+func (c *ContactType) CreateContactType(contactType bu.ContactTypeBO) (uuid.UUID, error) {
 
 	contType := ent.TableContactType{ContactType: contactType.ContactType}
 	c.Db.Create(&contType)
@@ -43,7 +44,7 @@ func (c *ContactType) UpdateContactType(contactType bu.ContactTypeBO) (bool, err
 
 	contacttype := ent.TableContactType{}
 	c.Db.First(&contacttype, contactType.Id)
-	if contacttype.ID == 0 {
+	if contacttype.ID == uuid.Nil {
 		return false, errors.New("contact type not found")
 	}
 	contacttype.ContactType = contactType.ContactType
@@ -54,10 +55,10 @@ func (c *ContactType) UpdateContactType(contactType bu.ContactTypeBO) (bool, err
 //-------------------------------------------
 // Delete Contact Type
 //-------------------------------------------
-func (c *ContactType) DeleteContactType(id uint) (bool, error) {
+func (c *ContactType) DeleteContactType(id uuid.UUID) (bool, error) {
 	found := ent.TableContactType{}
 	c.Db.First(&found, id)
-	if found.ID == 0 {
+	if found.ID == uuid.Nil {
 		return false, errors.New("contact type not found")
 	}
 	c.Db.Delete(&found)
@@ -68,13 +69,13 @@ func (c *ContactType) DeleteContactType(id uint) (bool, error) {
 //-------------------------------------------
 // Get Contact type by Id
 //-------------------------------------------
-func (c *ContactType) GetContactTypeById(id uint) (bu.ContactTypeBO, error) {
+func (c *ContactType) GetContactTypeById(id uuid.UUID) (bu.ContactTypeBO, error) {
 
 	contactTypes := &ent.TableContactType{}
 	c.Db.First(&contactTypes, id)
 
 	result := bu.ContactTypeBO{}
-	if contactTypes.ID == 0 {
+	if contactTypes.ID == uuid.Nil {
 		return result, errors.New("record not found")
 	}
 	return bu.ContactTypeBO{ContactType: contactTypes.ContactType, Id: contactTypes.ID}, nil
@@ -87,7 +88,7 @@ func (c *ContactType) GetContactTypeByName(name string) (bu.ContactTypeBO, error
 
 	contactType := ent.TableContactType{}
 	c.Db.Where(&ent.TableContactType{ContactType: name}).First(&contactType)
-	if contactType.ID == 0 {
+	if contactType.ID == uuid.Nil {
 		return bu.ContactTypeBO{}, errors.New("record not found")
 	}
 	return bu.ContactTypeBO{ContactType: contactType.ContactType, Id: contactType.ID}, nil

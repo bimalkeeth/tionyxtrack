@@ -1,13 +1,17 @@
 package entities
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
+	"tionyxtrack/common"
+)
 import "errors"
 
 type TableVehicleModel struct {
-	gorm.Model
+	common.Base
 	ModelName   string            `gorm:"column:modelname;not_null"`
 	Description string            `gorm:"column:description"`
-	MakeId      uint              `gorm:"column:makeid;not_null"`
+	MakeId      uuid.UUID         `gorm:"column:makeid;not_null"`
 	Make        *TableVehicleMake `gorm:"foreignkey:makeid"`
 }
 

@@ -1,9 +1,12 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type OperatorBO struct {
-	Id         uint
+	Id         uuid.UUID
 	Name       string
 	SurName    string
 	Active     bool

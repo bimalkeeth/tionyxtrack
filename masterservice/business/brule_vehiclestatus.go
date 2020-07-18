@@ -3,14 +3,15 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IVehicleStatus interface {
-	CreateVehicleStatus(bo bu.VehicleStatusBO) (uint, error)
+	CreateVehicleStatus(bo bu.VehicleStatusBO) (uuid.UUID, error)
 	UpdateVehicleStatus(bo bu.VehicleStatusBO) (bool, error)
-	DeleteVehicleStatus(id uint) (bool, error)
+	DeleteVehicleStatus(id uuid.UUID) (bool, error)
 	GetAllVehicleStatus() ([]bu.VehicleStatusBO, error)
 }
 
@@ -25,7 +26,7 @@ func NewVhStatus(db *gorm.DB) *VehicleStatus {
 //-----------------------------------------------
 //Create vehicle status
 //-----------------------------------------------
-func (v *VehicleStatus) CreateVehicleStatus(bo bu.VehicleStatusBO) (uint, error) {
+func (v *VehicleStatus) CreateVehicleStatus(bo bu.VehicleStatusBO) (uuid.UUID, error) {
 	vhStatus := ent.TableVehicleStatus{
 		StatusName: bo.StatusName,
 		StatusType: bo.StatusType,
@@ -40,7 +41,7 @@ func (v *VehicleStatus) CreateVehicleStatus(bo bu.VehicleStatusBO) (uint, error)
 func (v *VehicleStatus) UpdateVehicleStatus(bo bu.VehicleStatusBO) (bool, error) {
 	vhStatus := ent.TableVehicleStatus{}
 	v.Db.First(&vhStatus, bo.Id)
-	if vhStatus.ID == 0 {
+	if vhStatus.ID == uuid.Nil {
 		return false, errors.New("record not found")
 	}
 
@@ -53,10 +54,10 @@ func (v *VehicleStatus) UpdateVehicleStatus(bo bu.VehicleStatusBO) (bool, error)
 //-----------------------------------------------
 //Delete vehicle status
 //-----------------------------------------------
-func (v *VehicleStatus) DeleteVehicleStatus(id uint) (bool, error) {
+func (v *VehicleStatus) DeleteVehicleStatus(id uuid.UUID) (bool, error) {
 	vhStatus := ent.TableVehicleStatus{}
 	v.Db.First(&vhStatus, id)
-	if vhStatus.ID == 0 {
+	if vhStatus.ID == uuid.Nil {
 		return false, errors.New("record not found")
 	}
 	v.Db.Delete(&vhStatus)

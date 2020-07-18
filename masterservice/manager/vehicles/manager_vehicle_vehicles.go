@@ -2,6 +2,7 @@ package vehicles
 
 import (
 	"fmt"
+	uuid "github.com/satori/go.uuid"
 	"time"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
@@ -10,7 +11,7 @@ import (
 //----------------------------------------
 //Create Vehicle
 //----------------------------------------
-func (v *VehicleManager) CreateVehicle(vehicle bu.VehicleBO) (uint, error) {
+func (v *VehicleManager) CreateVehicle(vehicle bu.VehicleBO) (uuid.UUID, error) {
 	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	vehicleFac.Conn.Begin()
 	res, err := veh.CreateVehicle(vehicle)
@@ -62,7 +63,7 @@ func (v *VehicleManager) UpdateVehicle(vehicle bu.VehicleBO) (bool, error) {
 //-----------------------------------------
 //Delete Vehicle
 //-----------------------------------------
-func (v *VehicleManager) DeleteVehicle(vehicleId uint) (bool, error) {
+func (v *VehicleManager) DeleteVehicle(vehicleId uuid.UUID) (bool, error) {
 	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	vehicleFac.Conn.Begin()
 	res, err := veh.DeleteVehicle(vehicleId)
@@ -77,7 +78,7 @@ func (v *VehicleManager) DeleteVehicle(vehicleId uint) (bool, error) {
 //-----------------------------------------
 //Get Vehicle by Id
 //-----------------------------------------
-func (v *VehicleManager) GetVehicleById(vehicleId uint) (bu.VehicleBO, error) {
+func (v *VehicleManager) GetVehicleById(vehicleId uuid.UUID) (bu.VehicleBO, error) {
 	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	res, err := veh.GetVehicleById(vehicleId)
 	return res, err
@@ -95,7 +96,7 @@ func (v *VehicleManager) GetVehicleByRegistration(registration string) (bu.Vehic
 //-----------------------------------------
 //Get Vehicle by Fleet Id
 //-----------------------------------------
-func (v *VehicleManager) GetVehiclesByFleetId(fleetId uint) ([]bu.VehicleBO, error) {
+func (v *VehicleManager) GetVehiclesByFleetId(fleetId uuid.UUID) ([]bu.VehicleBO, error) {
 	veh := vehicleFac.New(bs.CVehicle).(*bs.Vehicle)
 	res, err := veh.GetVehiclesByFleetId(fleetId)
 	return res, err

@@ -1,0 +1,26 @@
+package messages
+
+const (
+	ErrorNotDefinedCountryid       = "contact not defined for company"
+	ErrorNotDefinedName            = "name not defined"
+	ErrorNotDefinedLastName        = "last name not defined"
+	ErrorNotDefinedFleetId         = "fleet id is not defined"
+	ErrorNotDefinedContactId       = "fleet id is not defined"
+	ErrorNotDefinedFleetContactId  = "id is not defined for fleet contact"
+	ErrorNotDefinedAddressId       = "address id is not defined"
+	ErrorNotDefinedFleetLocationId = "id is not defined for fleet location"
+	ErrorNotDefinedCompanyId       = "id is not defined for company"
+	ErrorNotDefinedCompanyName     = "name is not defined for company"
+	ErrorNotDefinedAddressTypeName = "name is not defined for address type"
+	ErrorNotDefinedAddressTypeId   = "id is not defined for address type"
+	ErrorNotDefinedRegion          = "region is not defined"
+	ErrorNotDefinedRegionName      = "region name is not defined"
+	ErrorNotDefinedRegionId        = "id is not defined for region"
+	ErrorNotDefinedStateName       = "name is not defined for state"
+	ErrorNotDefinedStateId         = "state id is not defined for state"
+	ErrorNotDefinedContactTypeId   = "contact type id not defined"
+	ErrorNotDefinedContactName     = "contact name not defined"
+	ErrorNotDefinedAddressNo       = "address name not defined"
+	ErrorNotDefinedAddressStreet   = "address street not defined"
+	ErrorNotDefinedAddressLocation = "address location not defined"
+)

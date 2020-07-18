@@ -3,17 +3,17 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
-
 type IVehicleModel interface {
-	CreateVehicleModel(bo bu.VehicleModelBO) (uint, error)
+	CreateVehicleModel(bo bu.VehicleModelBO) (uuid.UUID, error)
 	UpdateVehicleModel(bo bu.VehicleModelBO) (bool, error)
-	DeleteVehicleModel(id uint) (bool, error)
-	GetAllModelByMake(makeid uint) ([]bu.VehicleModelBO, error)
-	GetModelById(id uint) (bu.VehicleModelBO, error)
+	DeleteVehicleModel(id uuid.UUID) (bool, error)
+	GetAllModelByMake(makeid uuid.UUID) ([]bu.VehicleModelBO, error)
+	GetModelById(id uuid.UUID) (bu.VehicleModelBO, error)
 }
 
 type VehicleModel struct {
@@ -27,7 +27,7 @@ func NewVehicleModel(db *gorm.DB) VehicleModel {
 //------------------------------------------------
 //Create vehicle model
 //------------------------------------------------
-func (m *VehicleModel) CreateVehicleModel(bo bu.VehicleModelBO) (uint, error) {
+func (m *VehicleModel) CreateVehicleModel(bo bu.VehicleModelBO) (uuid.UUID, error) {
 	vehicleModel := ent.TableVehicleModel{
 		ModelName:   bo.ModelName,
 		Description: bo.Description,
@@ -43,7 +43,7 @@ func (m *VehicleModel) CreateVehicleModel(bo bu.VehicleModelBO) (uint, error) {
 func (m *VehicleModel) UpdateVehicleModel(bo bu.VehicleModelBO) (bool, error) {
 	vehicleModel := ent.TableVehicleModel{}
 	m.Db.First(&vehicleModel, bo.Id)
-	if vehicleModel.ID == 0 {
+	if vehicleModel.ID == uuid.Nil {
 		return false, errors.New("vehicle model could not be found")
 	}
 	vehicleModel.MakeId = bo.MakeId
@@ -56,10 +56,10 @@ func (m *VehicleModel) UpdateVehicleModel(bo bu.VehicleModelBO) (bool, error) {
 //------------------------------------------------
 //Delete vehicle model
 //------------------------------------------------
-func (m *VehicleModel) DeleteVehicleModel(id uint) (bool, error) {
+func (m *VehicleModel) DeleteVehicleModel(id uuid.UUID) (bool, error) {
 	vehicleModel := ent.TableVehicleModel{}
 	m.Db.First(&vehicleModel, id)
-	if vehicleModel.ID == 0 {
+	if vehicleModel.ID == uuid.Nil {
 		return false, errors.New("vehicle model could not be found")
 	}
 	m.Db.Delete(&vehicleModel)
@@ -69,7 +69,7 @@ func (m *VehicleModel) DeleteVehicleModel(id uint) (bool, error) {
 //------------------------------------------------
 //Get vehicle model by Make
 //------------------------------------------------
-func (m *VehicleModel) GetAllModelByMake(makeid uint) ([]bu.VehicleModelBO, error) {
+func (m *VehicleModel) GetAllModelByMake(makeid uuid.UUID) ([]bu.VehicleModelBO, error) {
 
 	var vehicleModels []ent.TableVehicleModel
 	var modelResult []bu.VehicleModelBO
@@ -102,11 +102,11 @@ func (m *VehicleModel) GetAllModelByMake(makeid uint) ([]bu.VehicleModelBO, erro
 //------------------------------------------------
 //Get vehicle model by Id
 //------------------------------------------------
-func (m *VehicleModel) GetModelById(id uint) (bu.VehicleModelBO, error) {
+func (m *VehicleModel) GetModelById(id uuid.UUID) (bu.VehicleModelBO, error) {
 	vehicleModel := ent.TableVehicleModel{}
 	vehicleModelResult := bu.VehicleModelBO{}
 	m.Db.Preload("Make").Preload("Make.Country").First(&vehicleModel, id)
-	if vehicleModel.ID == 0 {
+	if vehicleModel.ID == uuid.Nil {
 		return vehicleModelResult, errors.New("vehicle model could not be found")
 	}
 

@@ -3,16 +3,19 @@ package entities
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	"tionyxtrack/common"
 )
+
 //-------------------------------------
 //Address type of the table
 //-------------------------------------
 type TableAddressType struct {
-	gorm.Model
+	common.Base
 	AddressType string          `gorm:"column:addresstype;not_null"`
 	Name        string          `gorm:"column:name;not_null"`
 	Address     []*TableAddress `gorm:"foreignkey:addresstypeid"`
 }
+
 func (t TableAddressType) TableName() string {
 	return "table_addresstype"
 }

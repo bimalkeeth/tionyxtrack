@@ -1,11 +1,14 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type VehicleMakeBO struct {
-	Id        uint
+	Id        uuid.UUID
 	Make      string
-	CountryId uint
+	CountryId uuid.UUID
 	UpdateAt  time.Time
 	Country   CountryBO
 }

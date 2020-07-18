@@ -3,14 +3,15 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IVehicleOperatorBound interface {
-	CreateVehicleOpBound(op bu.VehicleOperatorBoundBO) (uint, error)
+	CreateVehicleOpBound(op bu.VehicleOperatorBoundBO) (uuid.UUID, error)
 	UpdateVehicleOpBound(op bu.VehicleOperatorBoundBO) (bool, error)
-	DeleteVehicleOpBound(id uint) (bool, error)
+	DeleteVehicleOpBound(id uuid.UUID) (bool, error)
 }
 
 type VehicleOprBound struct {
@@ -24,7 +25,7 @@ func NewOprBound(db *gorm.DB) *VehicleOprBound {
 //----------------------------------------------
 // Create vehicle operator bound
 //----------------------------------------------
-func (v *VehicleOprBound) CreateVehicleOpBound(op bu.VehicleOperatorBoundBO) (uint, error) {
+func (v *VehicleOprBound) CreateVehicleOpBound(op bu.VehicleOperatorBoundBO) (uuid.UUID, error) {
 
 	vhOprModel := ent.TableVehicleOperatorBound{
 		Active:     op.Active,
@@ -41,7 +42,7 @@ func (v *VehicleOprBound) CreateVehicleOpBound(op bu.VehicleOperatorBoundBO) (ui
 func (v *VehicleOprBound) UpdateVehicleOpBound(op bu.VehicleOperatorBoundBO) (bool, error) {
 	vhOprModel := ent.TableVehicleOperatorBound{}
 	v.Db.First(&vhOprModel, op.Id)
-	if vhOprModel.ID == 0 {
+	if vhOprModel.ID == uuid.Nil {
 		return false, errors.New("record not found")
 	}
 	vhOprModel.OperatorId = op.OperatorId
@@ -53,10 +54,10 @@ func (v *VehicleOprBound) UpdateVehicleOpBound(op bu.VehicleOperatorBoundBO) (bo
 //----------------------------------------------
 // Delete vehicle operator bound
 //----------------------------------------------
-func (v *VehicleOprBound) DeleteVehicleOpBound(id uint) (bool, error) {
+func (v *VehicleOprBound) DeleteVehicleOpBound(id uuid.UUID) (bool, error) {
 	vhOprModel := ent.TableVehicleOperatorBound{}
 	v.Db.First(&vhOprModel, id)
-	if vhOprModel.ID == 0 {
+	if vhOprModel.ID == uuid.Nil {
 		return false, errors.New("record not found")
 	}
 

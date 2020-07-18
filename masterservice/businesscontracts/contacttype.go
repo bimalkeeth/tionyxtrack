@@ -1,6 +1,8 @@
 package bucontracts
 
+import uuid "github.com/satori/go.uuid"
+
 type ContactTypeBO struct {
-	Id          uint
+	Id          uuid.UUID
 	ContactType string
 }

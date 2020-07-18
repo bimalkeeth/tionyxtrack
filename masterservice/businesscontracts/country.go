@@ -1,11 +1,14 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type CountryBO struct {
-	Id          uint
+	Id          uuid.UUID
 	CountryName string
-	RegionId    uint
+	RegionId    uuid.UUID
 	Region      RegionBO
 	States      []StateBO
 	UpdatedAt   time.Time

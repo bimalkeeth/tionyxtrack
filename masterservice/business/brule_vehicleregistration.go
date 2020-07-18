@@ -3,16 +3,17 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IVehicleReg interface {
-	CreateVehicleReg(bo bu.VehicleTrackRegBO) (uint, error)
+	CreateVehicleReg(bo bu.VehicleTrackRegBO) (uuid.UUID, error)
 	UpdateVehicleReg(bo bu.VehicleTrackRegBO) (bool, error)
-	DeleteVehicleReg(id uint) (bool, error)
-	GetAllRegistrationsByVehicleId(id uint) ([]bu.VehicleTrackRegBO, error)
-	GetActiveRegistrationsByVehicleId(id uint) (bu.VehicleTrackRegBO, error)
+	DeleteVehicleReg(id uuid.UUID) (bool, error)
+	GetAllRegistrationsByVehicleId(id uuid.UUID) ([]bu.VehicleTrackRegBO, error)
+	GetActiveRegistrationsByVehicleId(id uuid.UUID) (bu.VehicleTrackRegBO, error)
 }
 
 type VehicleReg struct {
@@ -26,7 +27,7 @@ func NewVhReg(db *gorm.DB) *VehicleReg {
 //---------------------------------------------
 //Create vehicle registration
 //---------------------------------------------
-func (r *VehicleReg) CreateVehicleReg(bo bu.VehicleTrackRegBO) (uint, error) {
+func (r *VehicleReg) CreateVehicleReg(bo bu.VehicleTrackRegBO) (uuid.UUID, error) {
 	vhReg := ent.TableVehicleTrackReg{}
 	vhReg.VehicleId = bo.VehicleId
 	vhReg.Active = bo.Active
@@ -44,7 +45,7 @@ func (r *VehicleReg) CreateVehicleReg(bo bu.VehicleTrackRegBO) (uint, error) {
 func (r *VehicleReg) UpdateVehicleReg(bo bu.VehicleTrackRegBO) (bool, error) {
 	vhReg := ent.TableVehicleTrackReg{}
 	r.Db.First(&vhReg, bo.Id)
-	if vhReg.ID == 0 {
+	if vhReg.ID == uuid.Nil {
 		return false, errors.New("registration not found")
 	}
 	vhReg.RegisterDate = bo.RegisterDate
@@ -59,10 +60,10 @@ func (r *VehicleReg) UpdateVehicleReg(bo bu.VehicleTrackRegBO) (bool, error) {
 //---------------------------------------------
 //Delete vehicle registration
 //---------------------------------------------
-func (r *VehicleReg) DeleteVehicleReg(id uint) (bool, error) {
+func (r *VehicleReg) DeleteVehicleReg(id uuid.UUID) (bool, error) {
 	vhReg := ent.TableVehicleTrackReg{}
 	r.Db.First(&vhReg, id)
-	if vhReg.ID == 0 {
+	if vhReg.ID == uuid.Nil {
 		return false, errors.New("registration not found")
 	}
 	r.Db.Delete(&vhReg)
@@ -72,7 +73,7 @@ func (r *VehicleReg) DeleteVehicleReg(id uint) (bool, error) {
 //---------------------------------------------
 //Get vehicle registrations by VehicleId
 //---------------------------------------------
-func (r *VehicleReg) GetAllRegistrationsByVehicleId(id uint) ([]bu.VehicleTrackRegBO, error) {
+func (r *VehicleReg) GetAllRegistrationsByVehicleId(id uuid.UUID) ([]bu.VehicleTrackRegBO, error) {
 	var results []bu.VehicleTrackRegBO
 	var vhResult []ent.TableVehicleTrackReg
 	r.Db.Preload("Vehicle").Where("vehicleid = ?", id).Find(&vhResult)
@@ -101,7 +102,7 @@ func (r *VehicleReg) GetAllRegistrationsByVehicleId(id uint) ([]bu.VehicleTrackR
 //---------------------------------------------
 //Get active vehicle registrations by VehicleId
 //---------------------------------------------
-func (r *VehicleReg) GetActiveRegistrationsByVehicleId(id uint) (bu.VehicleTrackRegBO, error) {
+func (r *VehicleReg) GetActiveRegistrationsByVehicleId(id uuid.UUID) (bu.VehicleTrackRegBO, error) {
 
 	vh := ent.TableVehicleTrackReg{}
 	r.Db.Preload("Vehicle").Where("vehicleid = ? and active= ?", id, true).First(&vh)

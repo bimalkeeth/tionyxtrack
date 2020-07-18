@@ -3,16 +3,17 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IVehicleMake interface {
-	CreateVehicleMake(bo bu.VehicleMakeBO) (uint, error)
+	CreateVehicleMake(bo bu.VehicleMakeBO) (uuid.UUID, error)
 	UpdateVehicleMake(bo bu.VehicleMakeBO) (bool, error)
-	DeleteVehicleMake(id uint) (bool, error)
+	DeleteVehicleMake(id uuid.UUID) (bool, error)
 	GetAllVehicleMake() ([]bu.VehicleMakeBO, error)
-	GetVehicleMakeById(id uint) (bu.VehicleMakeBO, error)
+	GetVehicleMakeById(id uuid.UUID) (bu.VehicleMakeBO, error)
 }
 
 type VehicleMake struct {
@@ -26,7 +27,7 @@ func NewVehicleMake(db *gorm.DB) VehicleMake {
 //--------------------------------------------
 //Create Vehicle Make
 //--------------------------------------------
-func (v *VehicleMake) CreateVehicleMake(bo bu.VehicleMakeBO) (uint, error) {
+func (v *VehicleMake) CreateVehicleMake(bo bu.VehicleMakeBO) (uuid.UUID, error) {
 
 	vehicleMake := ent.TableVehicleMake{
 		CountryId: bo.CountryId,
@@ -43,7 +44,7 @@ func (v *VehicleMake) UpdateVehicleMake(bo bu.VehicleMakeBO) (bool, error) {
 
 	vehicleMake := ent.TableVehicleMake{}
 	v.Db.First(&vehicleMake, bo.Id)
-	if vehicleMake.ID == 0 {
+	if vehicleMake.ID == uuid.Nil {
 		return false, errors.New("vehicle make could not be found")
 	}
 	vehicleMake.CountryId = bo.CountryId
@@ -55,10 +56,10 @@ func (v *VehicleMake) UpdateVehicleMake(bo bu.VehicleMakeBO) (bool, error) {
 //--------------------------------------------
 //Delete Vehicle Make
 //--------------------------------------------
-func (v *VehicleMake) DeleteVehicleMake(id uint) (bool, error) {
+func (v *VehicleMake) DeleteVehicleMake(id uuid.UUID) (bool, error) {
 	vehicleMake := ent.TableVehicleMake{}
 	v.Db.First(&vehicleMake, id)
-	if vehicleMake.ID == 0 {
+	if vehicleMake.ID == uuid.Nil {
 		return false, errors.New("vehicle make could not be found")
 	}
 	v.Db.Delete(&vehicleMake)
@@ -92,10 +93,10 @@ func (v *VehicleMake) GetAllVehicleMake() ([]bu.VehicleMakeBO, error) {
 //--------------------------------------------
 //Get Vehicle Make By Id
 //--------------------------------------------
-func (v *VehicleMake) GetVehicleMakeById(id uint) (bu.VehicleMakeBO, error) {
+func (v *VehicleMake) GetVehicleMakeById(id uuid.UUID) (bu.VehicleMakeBO, error) {
 	vehicleMake := ent.TableVehicleMake{}
 	v.Db.Preload("Country").First(&vehicleMake, id)
-	if vehicleMake.ID == 0 {
+	if vehicleMake.ID == uuid.Nil {
 		return bu.VehicleMakeBO{}, errors.New("vehicle make could not be found")
 	}
 	result := bu.VehicleMakeBO{

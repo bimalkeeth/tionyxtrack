@@ -1,12 +1,15 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type VehicleModelBO struct {
-	Id          uint
+	Id          uuid.UUID
 	ModelName   string
 	Description string
-	MakeId      uint
+	MakeId      uuid.UUID
 	UpdatedAt   time.Time
 	Make        VehicleMakeBO
 }

@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IVehicleLocation interface {
-	CreateVehicleLocation(ad bu.VehicleAddressBO) (uint, error)
+	CreateVehicleLocation(ad bu.VehicleAddressBO) (uuid.UUID, error)
 	UpdateVehicleLocation(ad bu.VehicleAddressBO) (bool, error)
-	DeleteVehicleLocation(id uint) (bool, error)
-	GetVehicleLocationByVehicle(vehicleId uint) ([]bu.VehicleAddressBO, error)
+	DeleteVehicleLocation(id uuid.UUID) (bool, error)
+	GetVehicleLocationByVehicle(vehicleId uuid.UUID) ([]bu.VehicleAddressBO, error)
 }
 
 type VehicleLocation struct {
@@ -25,7 +26,7 @@ func NewVehicleLocation(db *gorm.DB) VehicleLocation {
 //----------------------------------------------------------
 // Create Vehicle location
 //----------------------------------------------------------
-func (l *VehicleLocation) CreateVehicleLocation(ad bu.VehicleAddressBO) (uint, error) {
+func (l *VehicleLocation) CreateVehicleLocation(ad bu.VehicleAddressBO) (uuid.UUID, error) {
 
 	vehicleLocation := ent.TableVehicleLocation{VehicleId: ad.VehicleId, AddressId: ad.AddressId, Primary: ad.Primary}
 	l.Db.Create(&vehicleLocation)
@@ -42,7 +43,7 @@ func (l *VehicleLocation) UpdateVehicleLocation(ad bu.VehicleAddressBO) (bool, e
 	}
 	vehicleLocation := ent.TableVehicleLocation{}
 	l.Db.First(&vehicleLocation, ad.Id)
-	if vehicleLocation.ID == 0 {
+	if vehicleLocation.ID == uuid.Nil {
 		return false, errors.New("vehicle location could not be found")
 	}
 	vehicleLocation.AddressId = ad.AddressId
@@ -56,7 +57,7 @@ func (l *VehicleLocation) UpdateVehicleLocation(ad bu.VehicleAddressBO) (bool, e
 func setVHPrimaryOff(f *VehicleLocation) {
 	vhLoc := &ent.TableVehicleLocation{}
 	f.Db.Where("primary = ?", true).First(&vhLoc)
-	if vhLoc.ID > 0 {
+	if vhLoc.ID != uuid.Nil {
 		vhLoc.Primary = false
 		f.Db.Save(&vhLoc)
 	}
@@ -65,10 +66,10 @@ func setVHPrimaryOff(f *VehicleLocation) {
 //----------------------------------------------------------
 // delete Vehicle location
 //----------------------------------------------------------
-func (l *VehicleLocation) DeleteVehicleLocation(id uint) (bool, error) {
+func (l *VehicleLocation) DeleteVehicleLocation(id uuid.UUID) (bool, error) {
 	vehicleLocation := ent.TableVehicleLocation{}
 	l.Db.First(&vehicleLocation, id)
-	if vehicleLocation.ID == 0 {
+	if vehicleLocation.ID == uuid.Nil {
 		return false, errors.New("vehicle location could not be found")
 	}
 	l.Db.Delete(&vehicleLocation)
@@ -78,7 +79,7 @@ func (l *VehicleLocation) DeleteVehicleLocation(id uint) (bool, error) {
 //----------------------------------------------------------
 // get Vehicle location by vehicleid
 //----------------------------------------------------------
-func (l *VehicleLocation) GetVehicleLocationByVehicle(vehicleId uint) ([]bu.VehicleAddressBO, error) {
+func (l *VehicleLocation) GetVehicleLocationByVehicle(vehicleId uuid.UUID) ([]bu.VehicleAddressBO, error) {
 	var vehicleLocation []ent.TableVehicleLocation
 	var locationResult []bu.VehicleAddressBO
 

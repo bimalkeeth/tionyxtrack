@@ -1,15 +1,18 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type AddressBO struct {
-	Id            uint
+	Id            uuid.UUID
 	Address       string
 	Street        string
 	Suburb        string
-	StateId       uint
-	CountryId     uint
-	AddressTypeId uint
+	StateId       uuid.UUID
+	CountryId     uuid.UUID
+	AddressTypeId uuid.UUID
 	Location      string
 	AddressType   AddressTypeBO
 	State         StateBO

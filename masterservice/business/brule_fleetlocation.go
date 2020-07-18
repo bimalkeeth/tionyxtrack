@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IFleetLocation interface {
-	CreateFleetLocation(fleetId uint, addressId uint, primary bool) (uint, error)
-	UpdateFleetLocation(id uint, fleetId uint, addressId uint, primary bool) (bool, error)
-	DeleteFleetLocation(id uint) (bool, error)
-	GetLocationByFleetId(fleetId uint) ([]bu.FleetAddressBO, error)
+	CreateFleetLocation(fleetId uuid.UUID, addressId uuid.UUID, primary bool) (uuid.UUID, error)
+	UpdateFleetLocation(id uuid.UUID, fleetId uuid.UUID, addressId uuid.UUID, primary bool) (bool, error)
+	DeleteFleetLocation(id uuid.UUID) (bool, error)
+	GetLocationByFleetId(fleetId uuid.UUID) ([]bu.FleetAddressBO, error)
 }
 
 type FleetLocation struct {
@@ -25,7 +26,7 @@ func NewFleetLocation(db *gorm.DB) FleetLocation {
 //-----------------------------------------------------------
 //Create Fleet location
 //-----------------------------------------------------------
-func (f *FleetLocation) CreateFleetLocation(fleetId uint, addressId uint, primary bool) (uint, error) {
+func (f *FleetLocation) CreateFleetLocation(fleetId uuid.UUID, addressId uuid.UUID, primary bool) (uuid.UUID, error) {
 	flContact := ent.TableFleetLocation{FleetId: fleetId, AddressId: addressId, Primary: primary}
 	f.Db.Create(&flContact)
 	return flContact.ID, nil
@@ -34,14 +35,14 @@ func (f *FleetLocation) CreateFleetLocation(fleetId uint, addressId uint, primar
 //----------------------------------------------------------
 //Update fleet location
 //----------------------------------------------------------
-func (f *FleetLocation) UpdateFleetLocation(id uint, fleetId uint, addressId uint, primary bool) (bool, error) {
+func (f *FleetLocation) UpdateFleetLocation(id uuid.UUID, fleetId uuid.UUID, addressId uuid.UUID, primary bool) (bool, error) {
 
 	if primary {
 		setFLPrimaryOff(f)
 	}
 	fleetLoc := ent.TableFleetLocation{}
 	f.Db.First(&fleetLoc, id)
-	if fleetLoc.ID == 0 {
+	if fleetLoc.ID == uuid.Nil {
 		return false, errors.New("fleet location can not be found")
 	}
 	fleetLoc.AddressId = addressId
@@ -54,7 +55,7 @@ func (f *FleetLocation) UpdateFleetLocation(id uint, fleetId uint, addressId uin
 func setFLPrimaryOff(f *FleetLocation) {
 	fleetLocation := &ent.TableFleetLocation{}
 	f.Db.Where("primary = ?", true).First(&fleetLocation)
-	if fleetLocation.ID > 0 {
+	if fleetLocation.ID != uuid.Nil {
 		fleetLocation.Primary = false
 		f.Db.Save(&fleetLocation)
 	}
@@ -63,10 +64,10 @@ func setFLPrimaryOff(f *FleetLocation) {
 //----------------------------------------------------------
 //Delete fleet location
 //----------------------------------------------------------
-func (f *FleetLocation) DeleteFleetLocation(id uint) (bool, error) {
+func (f *FleetLocation) DeleteFleetLocation(id uuid.UUID) (bool, error) {
 	fleetLoc := ent.TableFleetLocation{}
 	f.Db.First(&fleetLoc, id)
-	if fleetLoc.ID == 0 {
+	if fleetLoc.ID == uuid.Nil {
 		return false, errors.New("fleet location can not be found")
 	}
 	f.Db.Delete(&fleetLoc)
@@ -77,7 +78,7 @@ func (f *FleetLocation) DeleteFleetLocation(id uint) (bool, error) {
 //Get Fleet location by Fleet Id
 //----------------------------------------------------------
 
-func (f *FleetLocation) GetLocationByFleetId(fleetId uint) ([]bu.FleetAddressBO, error) {
+func (f *FleetLocation) GetLocationByFleetId(fleetId uuid.UUID) ([]bu.FleetAddressBO, error) {
 	var fleetLocation []ent.TableFleetLocation
 	var fleetLocationResult []bu.FleetAddressBO
 	f.Db.Preload("Address").Preload("Fleet").Where(&ent.TableFleetLocation{FleetId: fleetId}).Find(&fleetLocation)

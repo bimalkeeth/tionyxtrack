@@ -3,16 +3,17 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
-	 "tionyxtrack/masterservice/entities"
+	"tionyxtrack/masterservice/entities"
 )
 
 type IStates interface {
-	CreateState(bo bu.StateBO) (uint, error)
+	CreateState(bo bu.StateBO) (uuid.UUID, error)
 	UpdateState(bo bu.StateBO) (bool, error)
-	DeleteState(id uint) (bool, error)
-	GetStateById(id uint) (bu.StateBO, error)
-	GetStateByCountryId(id uint) ([]bu.StateBO, error)
+	DeleteState(id uuid.UUID) (bool, error)
+	GetStateById(id uuid.UUID) (bu.StateBO, error)
+	GetStateByCountryId(id uuid.UUID) ([]bu.StateBO, error)
 	GetStateByName(name string) (bu.StateBO, error)
 	GetAll() ([]bu.StateBO, error)
 }
@@ -21,7 +22,7 @@ type State struct{ Db *gorm.DB }
 
 func NewState(db *gorm.DB) *State { return &State{Db: db} }
 
-func (s *State) CreateState(bo bu.StateBO) (uint, error) {
+func (s *State) CreateState(bo bu.StateBO) (uuid.UUID, error) {
 	state := entities.TableState{Name: bo.Name, CountryId: bo.CountryId}
 	s.Db.Create(&state)
 	return state.ID, nil
@@ -30,7 +31,7 @@ func (s *State) UpdateState(bo bu.StateBO) (bool, error) {
 
 	state := entities.TableState{}
 	s.Db.First(&state, bo.Id)
-	if state.ID == 0 {
+	if state.ID == uuid.Nil {
 		return false, errors.New("state not found")
 	}
 	state.CountryId = bo.CountryId
@@ -39,26 +40,26 @@ func (s *State) UpdateState(bo bu.StateBO) (bool, error) {
 	s.Db.Save(&state)
 	return true, nil
 }
-func (s *State) DeleteState(id uint) (bool, error) {
+func (s *State) DeleteState(id uuid.UUID) (bool, error) {
 
 	found := entities.TableState{}
 	s.Db.First(&found, id)
-	if found.ID == 0 {
+	if found.ID == uuid.Nil {
 		return false, errors.New("contact type not found")
 	}
 	s.Db.Delete(&found)
 	return true, nil
 }
-func (s *State) GetStateById(id uint) (bu.StateBO, error) {
+func (s *State) GetStateById(id uuid.UUID) (bu.StateBO, error) {
 	result := entities.TableState{}
 	s.Db.First(&result, id)
 	resultBO := bu.StateBO{}
-	if result.ID == 0 {
+	if result.ID == uuid.Nil {
 		return resultBO, errors.New("state not found")
 	}
 	return resultBO, nil
 }
-func (s *State) GetStateByCountryId(id uint) ([]bu.StateBO, error) {
+func (s *State) GetStateByCountryId(id uuid.UUID) ([]bu.StateBO, error) {
 	var resultsEntities []entities.TableState
 	var results []bu.StateBO
 	var country entities.TableCountry
@@ -73,7 +74,7 @@ func (s *State) GetStateByCountryId(id uint) ([]bu.StateBO, error) {
 func (s *State) GetStateByName(name string) (bu.StateBO, error) {
 	state := entities.TableState{}
 	s.Db.Where(&entities.TableState{Name: name}).First(&state)
-	if state.ID == 0 {
+	if state.ID == uuid.Nil {
 		return bu.StateBO{}, errors.New("record not found")
 	}
 	return bu.StateBO{Name: state.Name, CountryId: state.CountryId, Id: state.ID}, nil

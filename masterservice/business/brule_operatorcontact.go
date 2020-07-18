@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IOperatorContact interface {
-	CreateOperatorContact(contactId uint, operatorId uint, primary bool) (uint, error)
-	UpdateOperatorContact(id uint, contactId uint, operatorId uint, primary bool) (bool, error)
-	DeleteOperatorContact(id uint) (bool, error)
-	GetAllContactsByOperator(operatorId uint) ([]bu.OperatorContactsBO, error)
+	CreateOperatorContact(contactId uuid.UUID, operatorId uuid.UUID, primary bool) (uuid.UUID, error)
+	UpdateOperatorContact(id uuid.UUID, contactId uuid.UUID, operatorId uuid.UUID, primary bool) (bool, error)
+	DeleteOperatorContact(id uuid.UUID) (bool, error)
+	GetAllContactsByOperator(operatorId uuid.UUID) ([]bu.OperatorContactsBO, error)
 }
 
 type OperatorContact struct {
@@ -25,7 +26,7 @@ func NewOperatorContact(db *gorm.DB) OperatorContact {
 //-----------------------------------------------------
 //Create operator contact
 //-----------------------------------------------------
-func (o *OperatorContact) CreateOperatorContact(contactId uint, operatorId uint, primary bool) (uint, error) {
+func (o *OperatorContact) CreateOperatorContact(contactId uuid.UUID, operatorId uuid.UUID, primary bool) (uuid.UUID, error) {
 	opContact := ent.TableVehicleOperatorContacts{ContactId: contactId, OperatorId: operatorId, Primary: primary}
 	o.Db.Create(&opContact)
 	return opContact.ID, nil
@@ -34,7 +35,7 @@ func (o *OperatorContact) CreateOperatorContact(contactId uint, operatorId uint,
 //-----------------------------------------------------
 //Update operator contact
 //-----------------------------------------------------
-func (o *OperatorContact) UpdateOperatorContact(id uint, contactId uint, operatorId uint, primary bool) (bool, error) {
+func (o *OperatorContact) UpdateOperatorContact(id uuid.UUID, contactId uuid.UUID, operatorId uuid.UUID, primary bool) (bool, error) {
 
 	if primary {
 		setOCPrimaryOff(o)
@@ -42,7 +43,7 @@ func (o *OperatorContact) UpdateOperatorContact(id uint, contactId uint, operato
 
 	opContact := ent.TableVehicleOperatorContacts{}
 	o.Db.First(&opContact, id)
-	if opContact.ID == 0 {
+	if opContact.ID == uuid.Nil {
 		return false, errors.New("operator contact not found")
 	}
 	opContact.OperatorId = operatorId
@@ -55,7 +56,7 @@ func (o *OperatorContact) UpdateOperatorContact(id uint, contactId uint, operato
 func setOCPrimaryOff(f *OperatorContact) {
 	oprCon := &ent.TableVehicleOperatorContacts{}
 	f.Db.Where("primary = ?", true).First(&oprCon)
-	if oprCon.ID > 0 {
+	if oprCon.ID != uuid.Nil {
 		oprCon.Primary = false
 		f.Db.Save(&oprCon)
 	}
@@ -64,10 +65,10 @@ func setOCPrimaryOff(f *OperatorContact) {
 //-----------------------------------------------------
 //Delete operator contact
 //-----------------------------------------------------
-func (o *OperatorContact) DeleteOperatorContact(id uint) (bool, error) {
+func (o *OperatorContact) DeleteOperatorContact(id uuid.UUID) (bool, error) {
 	opContact := ent.TableVehicleOperatorContacts{}
 	o.Db.First(&opContact, id)
-	if opContact.ID == 0 {
+	if opContact.ID == uuid.Nil {
 		return false, errors.New("operator contact not found")
 	}
 	o.Db.Delete(&opContact)
@@ -77,7 +78,7 @@ func (o *OperatorContact) DeleteOperatorContact(id uint) (bool, error) {
 //-----------------------------------------------------
 //get contacts for operator
 //-----------------------------------------------------
-func (o *OperatorContact) GetAllContactsByOperator(operatorId uint) ([]bu.OperatorContactsBO, error) {
+func (o *OperatorContact) GetAllContactsByOperator(operatorId uuid.UUID) ([]bu.OperatorContactsBO, error) {
 
 	var operators []ent.TableVehicleOperatorContacts
 	var oprResults []bu.OperatorContactsBO

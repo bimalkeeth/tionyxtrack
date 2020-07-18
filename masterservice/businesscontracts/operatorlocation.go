@@ -1,11 +1,14 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type OperatorLocationBO struct {
-	Id         uint
-	AddressId  uint
-	OperatorId uint
+	Id         uuid.UUID
+	AddressId  uuid.UUID
+	OperatorId uuid.UUID
 	Primary    bool
 	UpdateAt   time.Time
 	Address    AddressBO

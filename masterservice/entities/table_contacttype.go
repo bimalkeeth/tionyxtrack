@@ -1,9 +1,13 @@
 package entities
-import "github.com/jinzhu/gorm"
+
+import (
+	"github.com/jinzhu/gorm"
+	"tionyxtrack/common"
+)
 import "errors"
 
 type TableContactType struct {
-	gorm.Model
+	common.Base
 	ContactType string          `gorm:"column:contacttype;not_null;"`
 	Contacts    []*TableContact `gorm:"foreignkey:contacttypeid"`
 }

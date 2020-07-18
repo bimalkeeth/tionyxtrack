@@ -2,7 +2,7 @@ package mappers
 
 import (
 	"log"
-con "tionyxtrack/masterservice/connection"
+	con "tionyxtrack/masterservice/connection"
 )
 
 type IEntityMapper interface {
@@ -41,6 +41,7 @@ func (t SchemaGenerator) GenerateSchema() error {
 	MapFleetTable(dbase)
 	MapFleetContactTable(dbase)
 	MapFleetLocationTable(dbase)
+	MapFleetConfigTable(dbase)
 	MapVehicleTable(dbase)
 	MapVehicleLocationTable(dbase)
 	MapVehicleTrackRegTable(dbase)

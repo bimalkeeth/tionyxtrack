@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	en "tionyxtrack/masterservice/entities"
 )
 
 type IOperator interface {
-	CreateOperator(bo bu.OperatorBO) (uint, error)
+	CreateOperator(bo bu.OperatorBO) (uuid.UUID, error)
 	UpdateOperator(bo bu.OperatorBO) (bool, error)
-	DeleteOperator(id uint) (bool, error)
-	GetOperatorById(id uint) (bu.OperatorBO, error)
+	DeleteOperator(id uuid.UUID) (bool, error)
+	GetOperatorById(id uuid.UUID) (bu.OperatorBO, error)
 	GetOperatorsByVehicleId(id uint) ([]bu.OperatorBO, error)
 }
 
@@ -26,7 +27,7 @@ func NewOperator(db *gorm.DB) *Operator {
 //--------------------------------------------
 //Create Operator
 //--------------------------------------------
-func (o *Operator) CreateOperator(bo bu.OperatorBO) (uint, error) {
+func (o *Operator) CreateOperator(bo bu.OperatorBO) (uuid.UUID, error) {
 	op := en.TableVehicleOperators{Active: bo.Active,
 		SurName:    bo.SurName,
 		Name:       bo.Name,
@@ -43,7 +44,7 @@ func (o *Operator) UpdateOperator(bo bu.OperatorBO) (bool, error) {
 
 	operator := en.TableVehicleOperators{}
 	o.Db.First(&operator, bo.Id)
-	if operator.ID == 0 {
+	if operator.ID == uuid.Nil {
 		return false, errors.New("operator could not be found")
 	}
 	operator.DrivingLic = bo.DrivingLic
@@ -57,10 +58,10 @@ func (o *Operator) UpdateOperator(bo bu.OperatorBO) (bool, error) {
 //---------------------------------------------
 //Delete operator
 //---------------------------------------------
-func (o *Operator) DeleteOperator(id uint) (bool, error) {
+func (o *Operator) DeleteOperator(id uuid.UUID) (bool, error) {
 	operator := en.TableVehicleOperators{}
 	o.Db.First(&operator, id)
-	if operator.ID == 0 {
+	if operator.ID == uuid.Nil {
 		return false, errors.New("operator could not be found")
 	}
 	o.Db.Delete(&operator)
@@ -70,7 +71,7 @@ func (o *Operator) DeleteOperator(id uint) (bool, error) {
 //---------------------------------------------
 //Get Operator by Id
 //---------------------------------------------
-func (o *Operator) GetOperatorById(id uint) (bu.OperatorBO, error) {
+func (o *Operator) GetOperatorById(id uuid.UUID) (bu.OperatorBO, error) {
 	var tbop en.TableVehicleOperators
 	var result bu.OperatorBO
 
@@ -138,7 +139,7 @@ func (o *Operator) GetOperatorById(id uint) (bu.OperatorBO, error) {
 //------------------------------------------------
 //Get operators by VehicleId
 //------------------------------------------------
-func (o *Operator) GetOperatorsByVehicleId(id uint) ([]bu.OperatorBO, error) {
+func (o *Operator) GetOperatorsByVehicleId(id uuid.UUID) ([]bu.OperatorBO, error) {
 
 	vehicle := en.TableVehicle{}
 	var resultlist []bu.OperatorBO

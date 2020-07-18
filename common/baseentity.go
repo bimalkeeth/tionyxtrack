@@ -1,9 +1,8 @@
 package common
 
 import (
-	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
-
+	uuid "github.com/satori/go.uuid"
 	"time"
 )
 
@@ -15,7 +14,7 @@ type Base struct {
 }
 
 func (base *Base) BeforeCreate(scope *gorm.Scope) error {
-	guid := uuid.New()
+	guid := uuid.NewV4()
 	scope.SetColumn("ID", guid)
 	return nil
 }

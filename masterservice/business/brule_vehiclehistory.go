@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IVehicleHistory interface {
-	CreateVehicleHistory(history bu.VehicleHistoryBO) (uint, error)
+	CreateVehicleHistory(history bu.VehicleHistoryBO) (uuid.UUID, error)
 	UpdateVehicleHistory(history bu.VehicleHistoryBO) (bool, error)
-	DeleteVehicleHistory(id uint) (bool, error)
-	GetVehicleHistoryByVehicleId(vehicleId uint) ([]bu.VehicleHistoryBO, error)
+	DeleteVehicleHistory(id uuid.UUID) (bool, error)
+	GetVehicleHistoryByVehicleId(vehicleId uuid.UUID) ([]bu.VehicleHistoryBO, error)
 }
 
 type VehicleHistory struct {
@@ -25,7 +26,7 @@ func NewVehicleHistory(db *gorm.DB) VehicleHistory {
 //------------------------------------------------------
 //Create vehicle history
 //------------------------------------------------------
-func (h *VehicleHistory) CreateVehicleHistory(history bu.VehicleHistoryBO) (uint, error) {
+func (h *VehicleHistory) CreateVehicleHistory(history bu.VehicleHistoryBO) (uuid.UUID, error) {
 	vehicleHistory := ent.TableVehicleHistory{
 		ChangeDate:   history.ChangeDate,
 		Description:  history.Description,
@@ -43,13 +44,13 @@ func (h *VehicleHistory) CreateVehicleHistory(history bu.VehicleHistoryBO) (uint
 //------------------------------------------------------
 func (h *VehicleHistory) UpdateVehicleHistory(history bu.VehicleHistoryBO) (bool, error) {
 
-	if history.Id == 0 {
+	if history.Id == uuid.Nil {
 		return false, errors.New("vehicle history id not defined")
 	}
 
 	vehicleHistory := ent.TableVehicleHistory{}
 	h.Db.First(&vehicleHistory, history.Id)
-	if vehicleHistory.ID == 0 {
+	if vehicleHistory.ID == uuid.Nil {
 		return false, errors.New("vehicle history not fond")
 	}
 	vehicleHistory.ToStatusId = history.ToStatusId
@@ -65,10 +66,10 @@ func (h *VehicleHistory) UpdateVehicleHistory(history bu.VehicleHistoryBO) (bool
 //------------------------------------------------------
 //Delete vehicle history
 //------------------------------------------------------
-func (h *VehicleHistory) DeleteVehicleHistory(id uint) (bool, error) {
+func (h *VehicleHistory) DeleteVehicleHistory(id uuid.UUID) (bool, error) {
 	vehicleHistory := ent.TableVehicleHistory{}
 	h.Db.First(&vehicleHistory, id)
-	if vehicleHistory.ID == 0 {
+	if vehicleHistory.ID == uuid.Nil {
 		return false, errors.New("vehicle history not fond")
 	}
 	h.Db.Delete(&vehicleHistory)
@@ -78,7 +79,7 @@ func (h *VehicleHistory) DeleteVehicleHistory(id uint) (bool, error) {
 //------------------------------------------------------
 //Get vehicle history by vehicle id
 //------------------------------------------------------
-func (h *VehicleHistory) GetVehicleHistoryByVehicleId(vehicleId uint) ([]bu.VehicleHistoryBO, error) {
+func (h *VehicleHistory) GetVehicleHistoryByVehicleId(vehicleId uuid.UUID) ([]bu.VehicleHistoryBO, error) {
 	var vehicleHistories []ent.TableVehicleHistory
 	var historyResult []bu.VehicleHistoryBO
 

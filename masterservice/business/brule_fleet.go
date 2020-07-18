@@ -3,6 +3,7 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	en "tionyxtrack/masterservice/entities"
 )
@@ -10,8 +11,8 @@ import (
 type IFleet interface {
 	CreateFleet(bo bu.FleetBO) (bu.FleetBO, error)
 	UpdateFleet(bo bu.FleetBO) (bool, error)
-	DeleteFleet(id uint) (bool, error)
-	GetFleetById(id uint) (bu.FleetBO, error)
+	DeleteFleet(id uuid.UUID) (bool, error)
+	GetFleetById(id uuid.UUID) (bu.FleetBO, error)
 }
 
 type Fleet struct{ Db *gorm.DB }
@@ -46,7 +47,7 @@ func (f *Fleet) UpdateFleet(bo bu.FleetBO) (bool, error) {
 
 	fleet := &en.TableFleet{}
 	f.Db.First(fleet, bo.Id)
-	if fleet.ID == 0 {
+	if fleet.ID == uuid.Nil {
 		return false, errors.New("fleet can not be found")
 	}
 
@@ -65,10 +66,10 @@ func (f *Fleet) UpdateFleet(bo bu.FleetBO) (bool, error) {
 //----------------------------------------------------------
 //Update Fleet
 //----------------------------------------------------------
-func (f *Fleet) DeleteFleet(id uint) (bool, error) {
+func (f *Fleet) DeleteFleet(id uuid.UUID) (bool, error) {
 	fleet := &en.TableFleet{}
 	f.Db.First(fleet, id)
-	if fleet.ID == 0 {
+	if fleet.ID == uuid.Nil {
 		return false, errors.New("fleet can not be found")
 	}
 	f.Db.Delete(fleet)
@@ -78,14 +79,14 @@ func (f *Fleet) DeleteFleet(id uint) (bool, error) {
 //----------------------------------------------------------
 //Get Fleet Id
 //----------------------------------------------------------
-func (f *Fleet) GetFleetById(id uint) (bu.FleetBO, error) {
+func (f *Fleet) GetFleetById(id uuid.UUID) (bu.FleetBO, error) {
 	fleet := &en.TableFleet{}
 	f.Db.Preload("FleetContacts").
 		Preload("FleetContacts.Contact").
 		Preload("FleetLocations").
 		Preload("FleetLocations.Address").
 		First(fleet, id)
-	if fleet.ID == 0 {
+	if fleet.ID == uuid.Nil {
 		return bu.FleetBO{}, errors.New("fleet can not be found")
 	}
 

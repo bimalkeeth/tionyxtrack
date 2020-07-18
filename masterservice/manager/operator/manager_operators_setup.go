@@ -1,12 +1,12 @@
 package operator
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"log"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ma "tionyxtrack/masterservice/manager"
 )
-
 
 var OpFac *bs.RuleFactory
 
@@ -19,23 +19,23 @@ func init() {
 }
 
 type IOprManager interface {
-	CreateOperator(bo bu.OperatorBO) (uint, error)
+	CreateOperator(bo bu.OperatorBO) (uuid.UUID, error)
 	UpdateOperator(bo bu.OperatorBO) (bool, error)
-	DeleteOperator(id uint) (bool, error)
-	GetOperatorById(id uint) (bu.OperatorBO, error)
-	GetOperatorsByVehicleId(id uint) ([]bu.OperatorBO, error)
-	CreateOperatorContact(contactId uint, operatorId uint, primary bool) (uint, error)
-	UpdateOperatorContact(id uint, contactId uint, operatorId uint, primary bool) (bool, error)
-	DeleteOperatorContact(id uint) (bool, error)
-	GetAllContactsByOperator(operatorId uint) ([]bu.OperatorContactsBO, error)
-	CreateOperatorLocation(bo bu.OperatorLocationBO) (uint, error)
+	DeleteOperator(id uuid.UUID) (bool, error)
+	GetOperatorById(id uuid.UUID) (bu.OperatorBO, error)
+	GetOperatorsByVehicleId(id uuid.UUID) ([]bu.OperatorBO, error)
+	CreateOperatorContact(contactId uuid.UUID, operatorId uuid.UUID, primary bool) (uuid.UUID, error)
+	UpdateOperatorContact(id uuid.UUID, contactId uuid.UUID, operatorId uuid.UUID, primary bool) (bool, error)
+	DeleteOperatorContact(id uuid.UUID) (bool, error)
+	GetAllContactsByOperator(operatorId uuid.UUID) ([]bu.OperatorContactsBO, error)
+	CreateOperatorLocation(bo bu.OperatorLocationBO) (uuid.UUID, error)
 	UpdateOperatorLocation(bo bu.OperatorLocationBO) (bool, error)
-	DeleteOperatorLocation(id uint) (bool, error)
-	GetOperatorLocationByOperator(id uint) ([]bu.OperatorLocationBO, error)
+	DeleteOperatorLocation(id uuid.UUID) (bool, error)
+	GetOperatorLocationByOperator(id uuid.UUID) ([]bu.OperatorLocationBO, error)
 }
 
 type OprManager struct{}
 
-func New() *OprManager {
+func New() IOprManager {
 	return &OprManager{}
 }

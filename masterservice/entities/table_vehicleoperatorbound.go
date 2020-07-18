@@ -1,12 +1,16 @@
 package entities
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
+	"tionyxtrack/common"
+)
 import "errors"
 
 type TableVehicleOperatorBound struct {
-	gorm.Model
-	OperatorId uint                   `gorm:"column:operatorid;not_null"`
-	VehicleId  uint                   `gorm:"column:vehicleid;not_null"`
+	common.Base
+	OperatorId uuid.UUID              `gorm:"column:operatorid;not_null"`
+	VehicleId  uuid.UUID              `gorm:"column:vehicleid;not_null"`
 	Active     bool                   `gorm:"column:active;not_null"`
 	Operator   *TableVehicleOperators `gorm:"foreignkey:operatorid"`
 	Vehicle    *TableVehicle          `gorm:"foreignkey:vehicleid"`
@@ -18,10 +22,10 @@ func (t TableVehicleOperatorBound) TableName() string {
 
 func (t TableVehicleOperatorBound) Validate(db *gorm.DB) {
 
-	if t.OperatorId == 0 {
+	if t.OperatorId == uuid.Nil {
 		_ = db.AddError(errors.New("operator should contain value"))
 	}
-	if t.VehicleId == 0 {
+	if t.VehicleId == uuid.Nil {
 		_ = db.AddError(errors.New("vehicle should contain value"))
 	}
 }

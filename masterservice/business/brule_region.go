@@ -3,19 +3,20 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
-	 "tionyxtrack/masterservice/entities"
+	"tionyxtrack/masterservice/entities"
 )
 
 //-----------------------------------------------
 // Interface for region management
 //-----------------------------------------------
 type IRegion interface {
-	CreateRegion(bo bu.RegionBO) (uint, error)
+	CreateRegion(bo bu.RegionBO) (uuid.UUID, error)
 	UpdateRegion(bo bu.RegionBO) (bool, error)
-	DeleteRegion(id uint) (bool, error)
+	DeleteRegion(id uuid.UUID) (bool, error)
 	GetAllRegion() ([]bu.RegionBO, error)
-	GetRegionById(id uint) (bu.RegionBO, error)
+	GetRegionById(id uuid.UUID) (bu.RegionBO, error)
 	GetRegionByName(name string) (bu.RegionBO, error)
 }
 type Region struct{ Db *gorm.DB }
@@ -25,7 +26,7 @@ func NewRegion(db *gorm.DB) *Region { return &Region{Db: db} }
 //------------------------------------------------
 //Create region for the given data
 //------------------------------------------------
-func (r *Region) CreateRegion(bo bu.RegionBO) (uint, error) {
+func (r *Region) CreateRegion(bo bu.RegionBO) (uuid.UUID, error) {
 	region := &entities.TableRegion{Region: bo.Region, RegionName: bo.RegionName}
 	r.Db.Create(region)
 	return region.ID, nil
@@ -38,7 +39,7 @@ func (r *Region) UpdateRegion(bo bu.RegionBO) (bool, error) {
 
 	region := entities.TableRegion{}
 	r.Db.First(&region, bo.Id)
-	if region.ID == 0 {
+	if region.ID == uuid.Nil {
 		return false, errors.New("no record found for region")
 	}
 	region.Region = bo.Region
@@ -50,11 +51,11 @@ func (r *Region) UpdateRegion(bo bu.RegionBO) (bool, error) {
 //------------------------------------------------
 // Delete region by Id
 //------------------------------------------------
-func (r *Region) DeleteRegion(id uint) (bool, error) {
+func (r *Region) DeleteRegion(id uuid.UUID) (bool, error) {
 
 	found := entities.TableRegion{}
 	r.Db.First(&found, id)
-	if found.ID == 0 {
+	if found.ID == uuid.Nil {
 		return false, errors.New("contact type not found")
 	}
 	r.Db.Delete(&found)
@@ -78,12 +79,12 @@ func (r *Region) GetAllRegion() ([]bu.RegionBO, error) {
 //-----------------------------------------------
 // Get region by Id
 //-----------------------------------------------
-func (r *Region) GetRegionById(id uint) (bu.RegionBO, error) {
+func (r *Region) GetRegionById(id uuid.UUID) (bu.RegionBO, error) {
 	region := &entities.TableRegion{}
 	r.Db.First(&region, id)
 
 	result := bu.RegionBO{}
-	if region.ID == 0 {
+	if region.ID == uuid.Nil {
 		return result, errors.New("record not found")
 	}
 	return bu.RegionBO{Region: region.Region, RegionName: region.RegionName, Id: region.ID}, nil
@@ -95,7 +96,7 @@ func (r *Region) GetRegionById(id uint) (bu.RegionBO, error) {
 func (r *Region) GetRegionByName(name string) (bu.RegionBO, error) {
 	region := entities.TableRegion{}
 	r.Db.Where(&entities.TableRegion{RegionName: name}).First(&region)
-	if region.ID == 0 {
+	if region.ID == uuid.Nil {
 		return bu.RegionBO{}, errors.New("record not found")
 	}
 	return bu.RegionBO{Region: region.Region, RegionName: region.RegionName, Id: region.ID}, nil

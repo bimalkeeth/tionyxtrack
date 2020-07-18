@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	ent "tionyxtrack/masterservice/entities"
 )
 
 type IAddress interface {
-	CreateAddress(address bu.AddressBO) (uint, error)
+	CreateAddress(address bu.AddressBO) (uuid.UUID, error)
 	UpdateAddress(address bu.AddressBO) (bool, error)
-	DeleteAddress(id uint) (bool, error)
-	GetAddressById(id uint) (bu.AddressBO, error)
+	DeleteAddress(id uuid.UUID) (bool, error)
+	GetAddressById(id uuid.UUID) (bu.AddressBO, error)
 	GetAddressByName(name string) ([]bu.AddressBO, error)
 }
 
@@ -24,7 +25,7 @@ func NewAddress(db *gorm.DB) *Address { return &Address{Db: db} }
 //---------------------------------------------------
 //Create address
 //---------------------------------------------------
-func (a *Address) CreateAddress(address bu.AddressBO) (uint, error) {
+func (a *Address) CreateAddress(address bu.AddressBO) (uuid.UUID, error) {
 
 	addr := ent.TableAddress{CountryId: address.CountryId,
 		AddressTypeId: address.AddressTypeId,
@@ -44,7 +45,7 @@ func (a *Address) UpdateAddress(address bu.AddressBO) (bool, error) {
 
 	addr := &ent.TableAddress{}
 	a.Db.First(addr, address.Id)
-	if addr.ID == 0 {
+	if addr.ID == uuid.Nil {
 		return false, errors.New("address not found")
 	}
 	addr.Suburb = address.Suburb
@@ -61,12 +62,12 @@ func (a *Address) UpdateAddress(address bu.AddressBO) (bool, error) {
 //---------------------------------------------------
 //Delete Address
 //---------------------------------------------------
-func (a *Address) DeleteAddress(id uint) (bool, error) {
+func (a *Address) DeleteAddress(id uuid.UUID) (bool, error) {
 
 	address := &ent.TableAddress{}
 	a.Db.First(&address, id)
 
-	if address.ID == 0 {
+	if address.ID == uuid.Nil {
 		return false, errors.New("the record not exists in the storage")
 	}
 	a.Db.Delete(&address)
@@ -76,13 +77,13 @@ func (a *Address) DeleteAddress(id uint) (bool, error) {
 //----------------------------------------------------
 //Get Address by Id
 //----------------------------------------------------
-func (a *Address) GetAddressById(id uint) (bu.AddressBO, error) {
+func (a *Address) GetAddressById(id uuid.UUID) (bu.AddressBO, error) {
 
 	address := &ent.TableAddress{}
 	a.Db.First(&address, id)
 
 	result := bu.AddressBO{}
-	if address.ID == 0 {
+	if address.ID == uuid.Nil {
 		return result, errors.New("record not found")
 	}
 	return bu.AddressBO{CountryId: address.CountryId,

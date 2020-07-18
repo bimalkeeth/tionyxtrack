@@ -24,5 +24,6 @@ func (m *Master) CreateContact(context echo.Context) error {
 	if err := context.Bind(u); err != nil {
 		return err
 	}
+
 	return nil
 }

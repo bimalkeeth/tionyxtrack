@@ -1,14 +1,17 @@
 package bucontracts
 
-import "time"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 type VehicleHistoryBO struct {
-	Id           uint
-	VehicleId    uint
+	Id           uuid.UUID
+	VehicleId    uuid.UUID
 	ChangeDate   time.Time
 	Description  string
-	FromStatusId uint
-	ToStatusId   uint
+	FromStatusId uuid.UUID
+	ToStatusId   uuid.UUID
 	OfficerName  string
 	FromStatus   VehicleStatusBO
 	ToStatus     VehicleStatusBO

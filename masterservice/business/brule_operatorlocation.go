@@ -3,15 +3,16 @@ package business
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	bu "tionyxtrack/masterservice/businesscontracts"
 	en "tionyxtrack/masterservice/entities"
 )
 
 type IOperatorLocation interface {
-	CreateOperatorLocation(bo bu.OperatorLocationBO) (uint, error)
+	CreateOperatorLocation(bo bu.OperatorLocationBO) (uuid.UUID, error)
 	UpdateOperatorLocation(bo bu.OperatorLocationBO) (bool, error)
-	DeleteOperatorLocation(id uint) (bool, error)
-	GetOperatorLocationByOperator(id uint) ([]bu.OperatorLocationBO, error)
+	DeleteOperatorLocation(id uuid.UUID) (bool, error)
+	GetOperatorLocationByOperator(id uuid.UUID) ([]bu.OperatorLocationBO, error)
 }
 
 type OperatorLocation struct {
@@ -25,7 +26,7 @@ func NewOprLoc(db *gorm.DB) *OperatorLocation {
 //----------------------------------------------------
 //Create operator location
 //----------------------------------------------------
-func (l *OperatorLocation) CreateOperatorLocation(bo bu.OperatorLocationBO) (uint, error) {
+func (l *OperatorLocation) CreateOperatorLocation(bo bu.OperatorLocationBO) (uuid.UUID, error) {
 	oprLoc := en.TableVehicleOperatorLocation{}
 
 	oprLoc.AddressId = bo.AddressId
@@ -45,7 +46,7 @@ func (l *OperatorLocation) UpdateOperatorLocation(bo bu.OperatorLocationBO) (boo
 	}
 	oprLoc := en.TableVehicleOperatorLocation{}
 	l.Db.First(&oprLoc, bo.Id)
-	if oprLoc.ID == 0 {
+	if oprLoc.ID == uuid.Nil {
 		return false, errors.New("operator location not found")
 	}
 	oprLoc.OperatorId = bo.OperatorId
@@ -59,7 +60,7 @@ func (l *OperatorLocation) UpdateOperatorLocation(bo bu.OperatorLocationBO) (boo
 func setOLPrimaryOff(f *OperatorLocation) {
 	oprLoc := &en.TableVehicleOperatorLocation{}
 	f.Db.Where("primary = ?", true).First(&oprLoc)
-	if oprLoc.ID > 0 {
+	if oprLoc.ID != uuid.Nil {
 		oprLoc.Primary = false
 		f.Db.Save(&oprLoc)
 	}
@@ -68,10 +69,10 @@ func setOLPrimaryOff(f *OperatorLocation) {
 //----------------------------------------------------
 //Delete operator location
 //----------------------------------------------------
-func (l *OperatorLocation) DeleteOperatorLocation(id uint) (bool, error) {
+func (l *OperatorLocation) DeleteOperatorLocation(id uuid.UUID) (bool, error) {
 	oprLoc := en.TableVehicleOperatorLocation{}
 	l.Db.First(&oprLoc, id)
-	if oprLoc.ID == 0 {
+	if oprLoc.ID == uuid.Nil {
 		return false, errors.New("operator location not found")
 	}
 	l.Db.Delete(&oprLoc)
@@ -81,7 +82,7 @@ func (l *OperatorLocation) DeleteOperatorLocation(id uint) (bool, error) {
 //----------------------------------------------------
 //Get operator location
 //----------------------------------------------------
-func (l *OperatorLocation) GetOperatorLocationByOperator(id uint) ([]bu.OperatorLocationBO, error) {
+func (l *OperatorLocation) GetOperatorLocationByOperator(id uuid.UUID) ([]bu.OperatorLocationBO, error) {
 	var oprResults []en.TableVehicleOperatorLocation
 	var results []bu.OperatorLocationBO
 

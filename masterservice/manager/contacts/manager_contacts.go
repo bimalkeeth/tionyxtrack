@@ -1,6 +1,7 @@
 package contacts
 
 import (
+	uuid "github.com/satori/go.uuid"
 	bs "tionyxtrack/masterservice/business"
 	bu "tionyxtrack/masterservice/businesscontracts"
 )
@@ -8,14 +9,14 @@ import (
 //---------------------------------------
 //Create contact
 //---------------------------------------
-func (c *ContactManager) CreateContact(con bu.ContactBO) (uint, error) {
+func (c *ContactManager) CreateContact(con bu.ContactBO) (uuid.UUID, error) {
 
 	conFactory.Conn.Begin()
 	contact := conFactory.New(bs.CContact).(*bs.Contact)
 	id, err := contact.CreateContact(con)
 	if err != nil {
 		conFactory.Conn.Rollback()
-		return 0, err
+		return uuid.Nil, err
 	}
 	conFactory.Conn.Commit()
 	return id, nil
@@ -40,7 +41,7 @@ func (c *ContactManager) UpdateContact(con bu.ContactBO) (bool, error) {
 //------------------------------------
 //Delete Contact
 //------------------------------------
-func (c *ContactManager) DeleteContact(id uint) (bool, error) {
+func (c *ContactManager) DeleteContact(id uuid.UUID) (bool, error) {
 
 	conFactory.Conn.Begin()
 	contact := conFactory.New(bs.CContact).(*bs.Contact)
@@ -56,7 +57,7 @@ func (c *ContactManager) DeleteContact(id uint) (bool, error) {
 //------------------------------------
 //Get Contact by Id
 //------------------------------------
-func (c *ContactManager) ContactById(Id uint) (bu.ContactBO, error) {
+func (c *ContactManager) ContactById(Id uuid.UUID) (bu.ContactBO, error) {
 
 	contact := conFactory.New(bs.CContact).(*bs.Contact)
 	co, err := contact.ContactById(Id)
@@ -70,14 +71,14 @@ func (c *ContactManager) ContactById(Id uint) (bu.ContactBO, error) {
 //------------------------------------
 //Create Address
 //------------------------------------
-func (c *ContactManager) CreateAddress(add bu.AddressBO) (uint, error) {
+func (c *ContactManager) CreateAddress(add bu.AddressBO) (uuid.UUID, error) {
 
 	conFactory.Conn.Begin()
 	address := conFactory.New(bs.CAddress).(*bs.Address)
 	res, err := address.CreateAddress(add)
 	if err != nil {
 		conFactory.Conn.Rollback()
-		return 0, err
+		return uuid.Nil, err
 	}
 	conFactory.Conn.Commit()
 	return res, nil
@@ -102,7 +103,7 @@ func (c *ContactManager) UpdateAddress(add bu.AddressBO) (bool, error) {
 //------------------------------------
 //Delete Address
 //------------------------------------
-func (c *ContactManager) DeleteAddress(id uint) (bool, error) {
+func (c *ContactManager) DeleteAddress(id uuid.UUID) (bool, error) {
 
 	conFactory.Conn.Begin()
 	address := conFactory.New(bs.CAddress).(*bs.Address)
@@ -118,7 +119,7 @@ func (c *ContactManager) DeleteAddress(id uint) (bool, error) {
 //------------------------------------
 //Get Address by AddressId
 //------------------------------------
-func (c *ContactManager) GetAddressById(id uint) (bu.AddressBO, error) {
+func (c *ContactManager) GetAddressById(id uuid.UUID) (bu.AddressBO, error) {
 
 	address := conFactory.New(bs.CAddress).(*bs.Address)
 	result, err := address.GetAddressById(id)
